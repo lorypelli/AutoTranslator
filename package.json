@@ -1,0 +1,21 @@
+{
+    "name": "auto-translator",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "format": "prettier --write ."
+    },
+    "dependencies": {
+        "@discord-interactions/verify": "^0.3.16",
+        "discord-api-types": "^0.38.56",
+        "hono": "^4.13.12"
+    },
+    "devDependencies": {
+        "@types/node": "^26.6.4",
+        "prettier": "^3.9.6",
+        "prettier-plugin-organize-imports": "^4.3.0",
+        "tsdown": "^0.23.0",
+        "typescript": "^7.0.2",
+        "wrangler": "^4.145.0"
+    }
+}

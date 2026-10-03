@@ -1,0 +1,21 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "auto-translator",
+    "compatibility_date": "2026-03-20",
+    "compatibility_flags": ["nodejs_compat"],
+    "main": "dist/index.mjs",
+    "route": {
+        "pattern": "auto-translator.lorypelli.dev",
+        "custom_domain": true
+    },
+    "build": {
+        "command": "tsdown"
+    },
+    "dev": {
+        "port": 56789
+    },
+    "assets": {
+        "binding": "ASSETS",
+        "directory": "./dist"
+    }
+}
