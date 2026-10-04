@@ -1,13 +1,15 @@
 import verifyKey from '@discord-interactions/verify';
+import { env } from 'hono/adapter';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import type { DiscordEnv } from '../types/index.js';
+import type { APIInteraction } from 'discord-api-types/v10';
+import type { Bindings, DiscordEnv } from '../types/index.js';
 
 export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {
     const signature = ctx.req.header('X-Signature-Ed25519');
     const timestamp = ctx.req.header('X-Signature-Timestamp');
-    const publicKey = process.env.PUBLIC_KEY;
-    if (!signature || !timestamp || !publicKey) {
+    const { PUBLIC_KEY } = env<Bindings>(ctx);
+    if (!signature || !timestamp || !PUBLIC_KEY) {
         throw new HTTPException(401);
     }
     const body = await ctx.req.text();
@@ -15,7 +17,7 @@ export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {
         throw new HTTPException(400);
     }
     const isValidRequest = await verifyKey(
-        publicKey,
+        PUBLIC_KEY,
         signature,
         timestamp,
         body,
@@ -23,6 +25,7 @@ export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {
     if (!isValidRequest) {
         throw new HTTPException(401);
     }
-    ctx.set('interaction', JSON.parse(body));
+    const interaction: APIInteraction = JSON.parse(body);
+    ctx.set('interaction', interaction);
     await next();
 });

@@ -5,7 +5,7 @@ import {
     TextInputStyle,
 } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
-import { error } from '../../utils/index.js';
+import { error, toCustomId } from '../../utils/index.js';
 import {
     CUSTOM_MESSAGE_DESCRIPTION,
     MAX_MESSAGES,
@@ -26,7 +26,7 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
         return {
             type: InteractionResponseType.Modal,
             data: {
-                custom_id: `${MODAL_ID}:${interaction.data.target_id}`,
+                custom_id: toCustomId(MODAL_ID, interaction.data.target_id),
                 title: 'Auto Translate',
                 components: [
                     {

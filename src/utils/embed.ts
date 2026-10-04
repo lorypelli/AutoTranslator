@@ -7,6 +7,9 @@ import {
     type APIUser,
 } from 'discord-api-types/v10';
 
+const MAX_DESCRIPTION_LENGTH = 4096;
+const MAX_EMBEDS = 10;
+const MAX_EMBEDS_LENGTH = 6000;
 const SNOWFLAKE_TIMESTAMP_SHIFT = 22n;
 const DEFAULT_AVATARS = 6n;
 
@@ -19,14 +22,33 @@ export function getAvatarUrl(user: APIUser) {
     return `${RouteBases.cdn}/embed/avatars/${index}.png`;
 }
 
-export function toEmbed(message: APIMessage): APIEmbed {
-    const { author } = message;
+export function toEmbed(description: string, message?: APIMessage): APIEmbed {
     return {
-        author: {
-            name: author.global_name ?? author.username,
-            icon_url: getAvatarUrl(author),
+        author: message && {
+            name: message.author.global_name ?? message.author.username,
+            icon_url: getAvatarUrl(message.author),
         },
-        description: message.content || undefined,
-        timestamp: message.timestamp,
+        description: description.slice(0, MAX_DESCRIPTION_LENGTH) || undefined,
+        timestamp: message?.timestamp,
     };
+}
+
+function embedLength(embed: APIEmbed) {
+    return (embed.author?.name.length || 0) + (embed.description?.length || 0);
+}
+
+export function chunkEmbeds(embeds: APIEmbed[]) {
+    return embeds.reduce((chunks: APIEmbed[][], embed) => {
+        const last = chunks.at(-1);
+        const fits =
+            last &&
+            last.length < MAX_EMBEDS &&
+            [...last, embed].reduce(
+                (total, item) => total + embedLength(item),
+                0,
+            ) <= MAX_EMBEDS_LENGTH;
+        return fits
+            ? [...chunks.slice(0, -1), [...last, embed]]
+            : [...chunks, [embed]];
+    }, []);
 }

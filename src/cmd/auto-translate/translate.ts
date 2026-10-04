@@ -1,63 +1,79 @@
 import type { APIInteraction } from 'discord-api-types/v10';
-import type { Defer } from '../../types/index.js';
+import type { Bindings, Runtime } from '../../types/index.js';
 import {
+    chunkEmbeds,
+    deleteOriginal,
     error,
     followUp,
-    followUpError,
     getMessages,
     toEmbed,
+    translateMessages,
 } from '../../utils/index.js';
-import { MAX_EMBEDS, MAX_MESSAGES } from './constants.js';
+import { MAX_MESSAGES, MIN_MESSAGES } from './constants.js';
 
-async function sendMessages(
+type TranslateOptions = {
+    userId: string;
+    messages: number;
+    customMessage: string;
+};
+
+async function sendTranslations(
     interaction: APIInteraction,
+    env: Bindings,
     channelId: string,
-    userId: string,
-    messages: number,
-    customMessage: string,
+    { userId, messages, customMessage }: TranslateOptions,
 ) {
-    const fetched = await getMessages(channelId, MAX_MESSAGES);
-    if (!fetched) {
-        await followUpError(interaction, 'Could not fetch the messages.');
-        return;
-    }
-    const humans = fetched
-        .filter((message) => !message.author.bot)
+    const fetched = await getMessages(env, channelId, MAX_MESSAGES);
+    const recent = fetched
+        .filter((message) => !message.author.bot && message.content)
         .slice(-messages);
-    if (!humans.length) {
-        await followUpError(interaction, 'There are no messages to translate.');
-        return;
+    if (!recent.length) {
+        throw new Error('There are no messages to translate.');
     }
-    const embeds = humans.map(toEmbed);
-    for (let i = 0; i < embeds.length; i += MAX_EMBEDS) {
-        await followUp(interaction, {
-            content: i == 0 ? `<@${userId}> ${customMessage}` : undefined,
-            embeds: embeds.slice(i, i + MAX_EMBEDS),
-            allowed_mentions: { users: [userId] },
-        });
-    }
+    const translations = await translateMessages(
+        env,
+        recent.map((message) => message.content),
+        'English',
+    );
+    const chunks = chunkEmbeds(
+        recent.map((message, i) => toEmbed(translations[i], message)),
+    );
+    await deleteOriginal(interaction);
+    await chunks.reduce(
+        (previous, embeds, i) =>
+            previous.then(() =>
+                followUp(interaction, {
+                    content:
+                        i == 0 ? `<@${userId}> ${customMessage}` : undefined,
+                    embeds,
+                    allowed_mentions: { users: [userId] },
+                }),
+            ),
+        Promise.resolve(),
+    );
 }
 
 export function translate(
     interaction: APIInteraction,
-    defer: Defer,
-    userId: string,
-    messages: number,
-    customMessage: string,
+    { env, defer }: Runtime,
+    options: TranslateOptions,
 ) {
-    if (!interaction.channel_id) {
+    const channelId = interaction.channel?.id;
+    const { messages } = options;
+    if (!channelId) {
         return error('This can only be used in a channel.');
+    }
+    if (
+        !Number.isInteger(messages) ||
+        messages < MIN_MESSAGES ||
+        messages > MAX_MESSAGES
+    ) {
+        return error(
+            `Messages must be an integer between ${MIN_MESSAGES} and ${MAX_MESSAGES}.`,
+        );
     }
     if (messages < 1) {
         return error('Provide at least 1 message to translate.');
     }
-    return defer(
-        sendMessages(
-            interaction,
-            interaction.channel_id,
-            userId,
-            messages,
-            customMessage,
-        ),
-    );
+    return defer(sendTranslations(interaction, env, channelId, options));
 }
