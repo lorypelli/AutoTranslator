@@ -1,6 +1,9 @@
 import {
     AUTO_TRANSLATE_COMMAND,
+    AUTO_TRANSLATE_MODAL,
     AUTO_TRANSLATE_SELECT_MENU,
-} from './auto-translate.js';
+} from './auto-translate/index.js';
 
 export const COMMANDS = [AUTO_TRANSLATE_COMMAND, AUTO_TRANSLATE_SELECT_MENU];
+
+export const MODALS = [AUTO_TRANSLATE_MODAL];
