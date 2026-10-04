@@ -44,13 +44,11 @@ export const AUTO_TRANSLATE_COMMAND: Command = {
             },
         ],
     },
-    run(interaction, defer) {
-        return translate(
-            interaction,
-            defer,
-            getUserOption(interaction, 'user') || '',
-            getIntegerOption(interaction, 'messages') || 0,
-            getStringOption(interaction, 'custom-message') || '',
-        );
+    run(interaction, runtime) {
+        return translate(interaction, runtime, {
+            userId: getUserOption(interaction, 'user') || '',
+            messages: getIntegerOption(interaction, 'messages') || 0,
+            customMessage: getStringOption(interaction, 'custom-message') || '',
+        });
     },
 };

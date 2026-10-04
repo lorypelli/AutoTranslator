@@ -7,51 +7,49 @@ import {
 import type { Command } from '../../types/index.js';
 import { error, toCustomId } from '../../utils/index.js';
 import {
-    CUSTOM_MESSAGE_DESCRIPTION,
-    MAX_MESSAGES,
-    MESSAGES_DESCRIPTION,
-    MIN_MESSAGES,
+    EPHEMERAL_DESCRIPTION,
+    LANGUAGE_DESCRIPTION,
+    MAX_LANGUAGE_LENGTH,
     MODAL_ID,
 } from './constants.js';
 
-export const AUTO_TRANSLATE_SELECT_MENU: Command = {
+export const TRANSLATE_SELECT_MENU: Command = {
     data: {
-        type: ApplicationCommandType.User,
-        name: 'Auto Translate',
+        type: ApplicationCommandType.Message,
+        name: 'Translate',
     },
     run(interaction) {
-        if (interaction.data.type != ApplicationCommandType.User) {
-            return error('This can only be used on a user.');
+        if (interaction.data.type != ApplicationCommandType.Message) {
+            return error('This can only be used on a message.');
         }
         return {
             type: InteractionResponseType.Modal,
             data: {
                 custom_id: toCustomId(MODAL_ID, interaction.data.target_id),
-                title: 'Auto Translate',
+                title: 'Translate',
                 components: [
                     {
                         type: ComponentType.Label,
-                        label: 'Messages',
-                        description: MESSAGES_DESCRIPTION,
+                        label: 'Language',
+                        description: LANGUAGE_DESCRIPTION,
                         component: {
                             type: ComponentType.TextInput,
-                            custom_id: 'messages',
+                            custom_id: 'language',
                             style: TextInputStyle.Short,
-                            placeholder: `${MIN_MESSAGES} to ${MAX_MESSAGES}`,
-                            min_length: 1,
-                            max_length: 3,
+                            placeholder:
+                                'e.g. English, Spanish, French, Japanese',
+                            max_length: MAX_LANGUAGE_LENGTH,
                             required: true,
                         },
                     },
                     {
                         type: ComponentType.Label,
-                        label: 'Custom message',
-                        description: CUSTOM_MESSAGE_DESCRIPTION,
+                        label: 'Ephemeral',
+                        description: EPHEMERAL_DESCRIPTION,
                         component: {
-                            type: ComponentType.TextInput,
-                            custom_id: 'custom-message',
-                            style: TextInputStyle.Paragraph,
-                            required: true,
+                            type: ComponentType.Checkbox,
+                            custom_id: 'ephemeral',
+                            default: true,
                         },
                     },
                 ],

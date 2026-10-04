@@ -1,17 +1,17 @@
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import type { BotEnv } from '../types/index.js';
+import { env } from 'hono/adapter';
+import type { Bindings } from '../types/index.js';
 
-export const authBot = createMiddleware<BotEnv>(async (ctx, next) => {
+export const authBot = createMiddleware(async (ctx, next) => {
+    const { APPLICATION_ID, BOT_TOKEN } = env<Bindings>(ctx);
     const id = ctx.req.header('X-Application-ID');
     const token = ctx.req.header('X-Bot-Token');
     if (!id || !token) {
         throw new HTTPException(401);
     }
-    if (id != process.env.APPLICATION_ID || token != process.env.BOT_TOKEN) {
+    if (id != APPLICATION_ID || token != BOT_TOKEN) {
         throw new HTTPException(403);
     }
-    ctx.set('id', id);
-    ctx.set('token', token);
     await next();
 });

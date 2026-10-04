@@ -1,43 +1,33 @@
 import { Hono } from 'hono';
+import { env } from 'hono/adapter';
 import { HTTPException } from 'hono/http-exception';
-import {
-    InteractionResponseType,
-    InteractionType,
-    type APIInteractionResponse,
-} from 'discord-api-types/v10';
-import { COMMANDS, MODALS } from '../cmd/index.js';
+import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10';
+import { handleInteraction } from '../cmd/index.js';
 import { verifyDiscord } from '../middleware/index.js';
-import type { Defer, DiscordEnv } from '../types/index.js';
+import type { Bindings, DiscordEnv } from '../types/index.js';
+import { followUpError } from '../utils/index.js';
 
 export const interactions = new Hono<DiscordEnv>();
 
 interactions.post('/', verifyDiscord, (ctx) => {
     const interaction = ctx.get('interaction');
-    const defer: Defer = (work) => {
-        ctx.executionCtx.waitUntil(work);
-        return {
-            type: InteractionResponseType.DeferredChannelMessageWithSource,
-        };
-    };
-    if (interaction.type == InteractionType.Ping) {
-        return ctx.json<APIInteractionResponse>({
-            type: InteractionResponseType.Pong,
-        });
+    const response = handleInteraction(interaction, {
+        env: env<Bindings>(ctx),
+        defer: (work) => {
+            ctx.executionCtx.waitUntil(
+                work.then(
+                    () => {},
+                    (err: Error) => followUpError(interaction, err.message),
+                ),
+            );
+            return {
+                type: InteractionResponseType.DeferredChannelMessageWithSource,
+                data: { flags: MessageFlags.Ephemeral },
+            };
+        },
+    });
+    if (!response) {
+        throw new HTTPException(400);
     }
-    if (interaction.type == InteractionType.ApplicationCommand) {
-        const command = COMMANDS.find(
-            (cmd) => cmd.data.name == interaction.data.name,
-        );
-        if (command) {
-            return ctx.json(command.run(interaction, defer));
-        }
-    }
-    if (interaction.type == InteractionType.ModalSubmit) {
-        const [id, ...args] = interaction.data.custom_id.split(':');
-        const modal = MODALS.find((m) => m.id == id);
-        if (modal) {
-            return ctx.json(modal.run(interaction, defer, args));
-        }
-    }
-    throw new HTTPException(400);
+    return ctx.json(response);
 });

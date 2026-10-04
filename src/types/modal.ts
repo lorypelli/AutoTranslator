@@ -2,13 +2,13 @@ import type {
     APIInteractionResponse,
     APIModalSubmitInteraction,
 } from 'discord-api-types/v10';
-import type { Defer } from './defer.js';
+import type { Runtime } from './runtime.js';
 
 export type Modal = {
     id: string;
     run: (
         interaction: APIModalSubmitInteraction,
-        defer: Defer,
+        runtime: Runtime,
         args: string[],
     ) => APIInteractionResponse;
 };
