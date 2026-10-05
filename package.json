@@ -17,5 +17,6 @@
         "tsdown": "^0.23.0",
         "typescript": "^7.0.2",
         "wrangler": "^4.145.0"
-    }
+    },
+    "packageManager": "pnpm@12.9.0"
 }
