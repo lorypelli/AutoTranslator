@@ -3,13 +3,17 @@ import {
     ApplicationCommandType,
 } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
-import { getBooleanOption, getStringOption } from '../../utils/index.js';
+import {
+    getBooleanOption,
+    getMessageId,
+    getStringOption,
+} from '../../utils/index.js';
 import {
     EPHEMERAL_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
     MAX_LANGUAGE_LENGTH,
 } from './constants.js';
-import { sendTranslation } from './translate.js';
+import { sendTranslation, translateMessage } from './translate.js';
 
 export const TRANSLATE_COMMAND: Command = {
     data: {
@@ -20,7 +24,8 @@ export const TRANSLATE_COMMAND: Command = {
             {
                 type: ApplicationCommandOptionType.String,
                 name: 'message',
-                description: 'The message to translate',
+                description:
+                    'The text to translate, or the ID or link of a message',
                 required: true,
             },
             {
@@ -37,13 +42,18 @@ export const TRANSLATE_COMMAND: Command = {
             },
         ],
     },
-    run(interaction, { env, defer }) {
-        return defer(
-            sendTranslation(interaction, env, {
-                text: getStringOption(interaction, 'message') || '',
-                language: getStringOption(interaction, 'language') || '',
-                ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
-            }),
+    run(interaction, runtime) {
+        const text = getStringOption(interaction, 'message') || '';
+        const messageId = getMessageId(text);
+        const options = {
+            language: getStringOption(interaction, 'language') || '',
+            ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
+        };
+        if (messageId) {
+            return translateMessage(interaction, runtime, messageId, options);
+        }
+        return runtime.defer(
+            sendTranslation(interaction, runtime.env, text, options),
         );
     },
 };
