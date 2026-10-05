@@ -1,17 +1,12 @@
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import type { RequestEnv } from '../types/index.js';
-
-type RequestBody = {
-    language?: string;
-    messages?: string[];
-};
+import { parseJsonObject } from '../utils/index.js';
 
 export const validateRequest = createMiddleware<RequestEnv>(
     async (ctx, next) => {
-        const { language, messages }: RequestBody = await ctx.req.json().then(
-            (body: RequestBody | null) => body ?? {},
-            () => ({}),
+        const { language, messages } = await parseJsonObject(
+            await ctx.req.text(),
         );
         if (
             typeof language != 'string' ||

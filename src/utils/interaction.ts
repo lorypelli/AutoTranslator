@@ -31,7 +31,9 @@ function findModalComponent(
     customId: string,
 ) {
     return interaction.data.components
-        .flatMap((row) => ('component' in row ? [row.component] : []))
+        .flatMap((row) =>
+            row.type == ComponentType.Label ? [row.component] : [],
+        )
         .find((component) => component.custom_id == customId);
 }
 

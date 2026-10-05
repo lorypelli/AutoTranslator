@@ -2,6 +2,7 @@ import type { APIInteraction, APIMessage } from 'discord-api-types/v10';
 import type { Bindings } from '../../types/index.js';
 import {
     deleteOriginal,
+    editOriginal,
     followUp,
     toEmbed,
     translateMessages,
@@ -20,15 +21,15 @@ export async function sendTranslation(
     { text, language, ephemeral, message }: TranslateOptions,
 ) {
     const [translation] = await translateMessages(env, [text], language);
-    if (!ephemeral) {
-        await deleteOriginal(interaction);
+    const embeds = [
+        {
+            ...toEmbed(translation, message),
+            footer: { text: `Translated to ${language}` },
+        },
+    ];
+    if (ephemeral) {
+        return editOriginal(interaction, { embeds });
     }
-    await followUp(interaction, {
-        embeds: [
-            {
-                ...toEmbed(translation, message),
-                footer: { text: `Translated to ${language}` },
-            },
-        ],
-    });
+    await deleteOriginal(interaction);
+    await followUp(interaction, { embeds });
 }

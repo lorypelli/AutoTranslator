@@ -1,8 +1,8 @@
 import verifyKey from '@discord-interactions/verify';
+import type { APIInteraction } from 'discord-api-types/v10';
 import { env } from 'hono/adapter';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import type { APIInteraction } from 'discord-api-types/v10';
 import type { Bindings, DiscordEnv } from '../types/index.js';
 
 export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {

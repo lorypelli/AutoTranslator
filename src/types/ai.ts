@@ -5,11 +5,12 @@ export type AiMessage = {
 
 export type AiPayload = {
     response_format: { type: 'json_object' };
+    chat_template_kwargs: { enable_thinking: boolean };
     messages: AiMessage[];
 };
 
 export type AiCompletion = {
-    choices?: { message?: { content?: string } }[];
+    choices?: { message?: { content?: string | null } }[];
 };
 
 export type Ai = {

@@ -16,9 +16,5 @@
     },
     "ai": {
         "binding": "AI"
-    },
-    "assets": {
-        "binding": "ASSETS",
-        "directory": "./dist"
     }
 }

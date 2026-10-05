@@ -1,7 +1,7 @@
+import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10';
 import { Hono } from 'hono';
 import { env } from 'hono/adapter';
 import { HTTPException } from 'hono/http-exception';
-import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10';
 import { handleInteraction } from '../cmd/index.js';
 import { verifyDiscord } from '../middleware/index.js';
 import type { Bindings, DiscordEnv } from '../types/index.js';

@@ -10,6 +10,7 @@ import {
 } from '../../utils/index.js';
 import {
     CUSTOM_MESSAGE_DESCRIPTION,
+    MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
     MIN_MESSAGES,
@@ -40,6 +41,7 @@ export const AUTO_TRANSLATE_COMMAND: Command = {
                 type: ApplicationCommandOptionType.String,
                 name: 'custom-message',
                 description: CUSTOM_MESSAGE_DESCRIPTION,
+                max_length: MAX_CUSTOM_MESSAGE_LENGTH,
                 required: true,
             },
         ],
