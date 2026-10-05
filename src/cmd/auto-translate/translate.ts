@@ -7,9 +7,10 @@ import {
     followUp,
     getMessages,
     toEmbed,
+    translateContext,
     translateMessages,
 } from '../../utils/index.js';
-import { MAX_MESSAGES, MIN_MESSAGES } from './constants.js';
+import { CONTEXT_MESSAGES, MAX_MESSAGES, MIN_MESSAGES } from './constants.js';
 
 type TranslateOptions = {
     userId: string;
@@ -24,19 +25,25 @@ async function sendTranslations(
     { userId, messages, customMessage }: TranslateOptions,
 ) {
     const fetched = await getMessages(env, channelId, MAX_MESSAGES);
-    const recent = fetched
-        .filter((message) => !message.author.bot && message.content)
-        .slice(-messages);
+    const recent = fetched.filter(
+        (message) => !message.author.bot && message.content,
+    );
     if (!recent.length) {
         throw new Error('There are no messages to translate.');
     }
-    const translations = await translateMessages(
-        env,
-        recent.map((message) => message.content),
-        'English',
-    );
+    const contents = recent.map((message) => message.content);
+    const translations =
+        messages == CONTEXT_MESSAGES
+            ? await translateContext(env, contents, 'English')
+            : await translateMessages(
+                  env,
+                  contents.slice(-messages),
+                  'English',
+              );
     const chunks = chunkEmbeds(
-        recent.map((message, i) => toEmbed(translations[i], message)),
+        recent
+            .slice(-translations.length)
+            .map((message, i) => toEmbed(translations[i], message)),
     );
     await deleteOriginal(interaction);
     await chunks.reduce(
@@ -64,16 +71,14 @@ export function translate(
         return error('This can only be used in a channel.');
     }
     if (
-        !Number.isInteger(messages) ||
-        messages < MIN_MESSAGES ||
-        messages > MAX_MESSAGES
+        messages != CONTEXT_MESSAGES &&
+        (!Number.isInteger(messages) ||
+            messages < MIN_MESSAGES ||
+            messages > MAX_MESSAGES)
     ) {
         return error(
-            `Messages must be an integer between ${MIN_MESSAGES} and ${MAX_MESSAGES}.`,
+            `Messages must be ${CONTEXT_MESSAGES}, or an integer between ${MIN_MESSAGES} and ${MAX_MESSAGES}.`,
         );
-    }
-    if (messages < 1) {
-        return error('Provide at least 1 message to translate.');
     }
     return defer(sendTranslations(interaction, env, channelId, options));
 }
