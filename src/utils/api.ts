@@ -4,6 +4,7 @@ import {
     Routes,
     type APIInteraction,
     type APIMessage,
+    type RESTPatchAPIInteractionOriginalResponseJSONBody,
     type RESTPostAPIInteractionFollowupJSONBody,
     type RESTPutAPIApplicationCommandsJSONBody,
 } from 'discord-api-types/v10';
@@ -49,6 +50,17 @@ export async function followUp(
 
 export function followUpError(interaction: APIInteraction, content: string) {
     return followUp(interaction, { content, flags: MessageFlags.Ephemeral });
+}
+
+export async function editOriginal(
+    interaction: APIInteraction,
+    body: RESTPatchAPIInteractionOriginalResponseJSONBody,
+) {
+    await request(
+        Routes.webhookMessage(interaction.application_id, interaction.token),
+        'Could not edit the reply.',
+        { method: 'PATCH', body: JSON.stringify(body) },
+    );
 }
 
 export async function deleteOriginal(interaction: APIInteraction) {
