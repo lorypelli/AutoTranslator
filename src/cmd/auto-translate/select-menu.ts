@@ -7,6 +7,7 @@ import {
 import type { Command } from '../../types/index.js';
 import { error, toCustomId } from '../../utils/index.js';
 import {
+    CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
@@ -38,7 +39,7 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
                             type: ComponentType.TextInput,
                             custom_id: 'messages',
                             style: TextInputStyle.Short,
-                            placeholder: `${MIN_MESSAGES} to ${MAX_MESSAGES}`,
+                            placeholder: `${CONTEXT_MESSAGES}, or ${MIN_MESSAGES} to ${MAX_MESSAGES}`,
                             min_length: 1,
                             max_length: 3,
                             required: true,

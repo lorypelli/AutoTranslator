@@ -9,11 +9,11 @@ import {
     getUserOption,
 } from '../../utils/index.js';
 import {
+    CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
-    MIN_MESSAGES,
 } from './constants.js';
 import { translate } from './translate.js';
 
@@ -33,7 +33,7 @@ export const AUTO_TRANSLATE_COMMAND: Command = {
                 type: ApplicationCommandOptionType.Integer,
                 name: 'messages',
                 description: MESSAGES_DESCRIPTION,
-                min_value: MIN_MESSAGES,
+                min_value: CONTEXT_MESSAGES,
                 max_value: MAX_MESSAGES,
                 required: true,
             },
