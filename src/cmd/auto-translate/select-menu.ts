@@ -9,11 +9,13 @@ import { error, toCustomId } from '../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
+    FROM_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
     MIN_MESSAGES,
     MODAL_ID,
+    TO_DESCRIPTION,
 } from './constants.js';
 
 export const AUTO_TRANSLATE_SELECT_MENU: Command = {
@@ -33,20 +35,6 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
                 components: [
                     {
                         type: ComponentType.Label,
-                        label: 'Messages',
-                        description: MESSAGES_DESCRIPTION,
-                        component: {
-                            type: ComponentType.TextInput,
-                            custom_id: 'messages',
-                            style: TextInputStyle.Short,
-                            placeholder: `${CONTEXT_MESSAGES}, or ${MIN_MESSAGES} to ${MAX_MESSAGES}`,
-                            min_length: 1,
-                            max_length: 3,
-                            required: true,
-                        },
-                    },
-                    {
-                        type: ComponentType.Label,
                         label: 'Custom message',
                         description: CUSTOM_MESSAGE_DESCRIPTION,
                         component: {
@@ -55,6 +43,41 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
                             style: TextInputStyle.Paragraph,
                             max_length: MAX_CUSTOM_MESSAGE_LENGTH,
                             required: true,
+                        },
+                    },
+                    {
+                        type: ComponentType.Label,
+                        label: 'Messages',
+                        description: MESSAGES_DESCRIPTION,
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: 'messages',
+                            style: TextInputStyle.Short,
+                            placeholder: `${CONTEXT_MESSAGES}, or ${MIN_MESSAGES} to ${MAX_MESSAGES}`,
+                            max_length: 3,
+                            required: false,
+                        },
+                    },
+                    {
+                        type: ComponentType.Label,
+                        label: 'From',
+                        description: FROM_DESCRIPTION,
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: 'from',
+                            style: TextInputStyle.Short,
+                            required: false,
+                        },
+                    },
+                    {
+                        type: ComponentType.Label,
+                        label: 'To',
+                        description: TO_DESCRIPTION,
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: 'to',
+                            style: TextInputStyle.Short,
+                            required: false,
                         },
                     },
                 ],
