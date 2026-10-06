@@ -26,10 +26,10 @@ export const COMMANDS = [
 
 const MODALS = [AUTO_TRANSLATE_MODAL, TRANSLATE_MODAL];
 
-export function handleInteraction(
+export async function handleInteraction(
     interaction: APIInteraction,
     runtime: Runtime,
-): APIInteractionResponse | undefined {
+): Promise<APIInteractionResponse> {
     if (interaction.type == InteractionType.Ping) {
         return { type: InteractionResponseType.Pong };
     }
@@ -38,6 +38,16 @@ export function handleInteraction(
             COMMANDS.find(
                 (command) => command.data.name == interaction.data.name,
             )?.run(interaction, runtime) ?? error('Unknown command.')
+        );
+    }
+    if (interaction.type == InteractionType.ApplicationCommandAutocomplete) {
+        return (
+            (await COMMANDS.find(
+                (command) => command.data.name == interaction.data.name,
+            )?.autocomplete?.(interaction, runtime)) ?? {
+                type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+                data: { choices: [] },
+            }
         );
     }
     if (interaction.type == InteractionType.ModalSubmit) {
@@ -50,5 +60,5 @@ export function handleInteraction(
             ) ?? error('Unknown modal.')
         );
     }
-    return undefined;
+    return error('Unknown interaction.');
 }

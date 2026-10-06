@@ -1,7 +1,6 @@
 import { InteractionResponseType, MessageFlags } from 'discord-api-types/v10';
 import { Hono } from 'hono';
 import { env } from 'hono/adapter';
-import { HTTPException } from 'hono/http-exception';
 import { handleInteraction } from '../cmd/index.js';
 import { verifyDiscord } from '../middleware/index.js';
 import type { Bindings, DiscordEnv } from '../types/index.js';
@@ -9,9 +8,9 @@ import { followUpError } from '../utils/index.js';
 
 export const interactions = new Hono<DiscordEnv>();
 
-interactions.post('/', verifyDiscord, (ctx) => {
+interactions.post('/', verifyDiscord, async (ctx) => {
     const interaction = ctx.get('interaction');
-    const response = handleInteraction(interaction, {
+    const response = await handleInteraction(interaction, {
         env: env<Bindings>(ctx),
         defer: (work) => {
             ctx.executionCtx.waitUntil(
@@ -26,8 +25,5 @@ interactions.post('/', verifyDiscord, (ctx) => {
             };
         },
     });
-    if (!response) {
-        throw new HTTPException(400);
-    }
     return ctx.json(response);
 });
