@@ -10,7 +10,11 @@ export const AUTO_TRANSLATE_MODAL: Modal = {
         return translate(interaction, runtime, {
             userId,
             customMessage: getModalValue(interaction, 'custom-message') || '',
-            messages: messages ? parseInt(messages) : DEFAULT_MESSAGES,
+            messages: !messages
+                ? DEFAULT_MESSAGES
+                : /^-?\d+$/.test(messages)
+                  ? parseInt(messages)
+                  : NaN,
             from: getModalValue(interaction, 'from'),
             to: getModalValue(interaction, 'to'),
         });

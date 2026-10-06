@@ -38,7 +38,7 @@ export const TRANSLATE_COMMAND: Command = {
             {
                 type: ApplicationCommandOptionType.Boolean,
                 name: 'ephemeral',
-                description: EPHEMERAL_DESCRIPTION,
+                description: `${EPHEMERAL_DESCRIPTION} (default: true)`,
             },
         ],
     },
