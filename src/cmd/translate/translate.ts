@@ -5,6 +5,7 @@ import {
     editOriginal,
     error,
     followUp,
+    getLanguageName,
     getMessage,
     toEmbed,
     translateMessages,
@@ -22,11 +23,14 @@ export async function sendTranslation(
     { language, ephemeral }: TranslateOptions,
     message?: APIMessage,
 ) {
-    const [translation] = await translateMessages(env, [text], language);
+    const [[translation], languageName] = await Promise.all([
+        translateMessages(env, [text], language),
+        getLanguageName(env, language),
+    ]);
     const embeds = [
         {
             ...toEmbed(translation, message),
-            footer: { text: `Translated to ${language}` },
+            footer: { text: `Translated to ${languageName}` },
         },
     ];
     if (ephemeral) {
