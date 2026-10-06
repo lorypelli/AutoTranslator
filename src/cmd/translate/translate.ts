@@ -1,12 +1,11 @@
 import type { APIInteraction, APIMessage } from 'discord-api-types/v10';
 import type { Bindings, Runtime } from '../../types/index.js';
 import {
-    deleteOriginal,
-    editOriginal,
+    detectLanguage,
     error,
-    followUp,
     getLanguageName,
     getMessage,
+    sendEmbeds,
     toEmbed,
     translateMessages,
 } from '../../utils/index.js';
@@ -23,21 +22,22 @@ export async function sendTranslation(
     { language, ephemeral }: TranslateOptions,
     message?: APIMessage,
 ) {
-    const [[translation], languageName] = await Promise.all([
+    const [[translation], languageName, sourceName] = await Promise.all([
         translateMessages(env, [text], language),
         getLanguageName(env, language),
+        detectLanguage(env, text).then(
+            (name) => name,
+            () => undefined,
+        ),
     ]);
-    const embeds = [
-        {
-            ...toEmbed(translation, message),
-            footer: { text: `Translated to ${languageName}` },
-        },
-    ];
-    if (ephemeral) {
-        return editOriginal(interaction, { embeds });
-    }
-    await deleteOriginal(interaction);
-    await followUp(interaction, { embeds });
+    const footer = sourceName
+        ? `Translated from ${sourceName} to ${languageName}`
+        : `Translated to ${languageName}`;
+    await sendEmbeds(
+        interaction,
+        [{ ...toEmbed(translation, message), footer: { text: footer } }],
+        ephemeral,
+    );
 }
 
 async function sendMessageTranslation(

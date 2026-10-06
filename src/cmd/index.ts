@@ -6,11 +6,12 @@ import {
 } from 'discord-api-types/v10';
 import type { Runtime } from '../types/index.js';
 import { error, fromCustomId } from '../utils/index.js';
+import { SUMMARIZE_COMMAND } from './summarize/index.js';
 import {
-    AUTO_TRANSLATE_COMMAND,
-    AUTO_TRANSLATE_MODAL,
-    AUTO_TRANSLATE_SELECT_MENU,
-} from './auto-translate/index.js';
+    TRANSLATE_CHAT_COMMAND,
+    TRANSLATE_CHAT_MODAL,
+    TRANSLATE_CHAT_SELECT_MENU,
+} from './translate-chat/index.js';
 import {
     TRANSLATE_COMMAND,
     TRANSLATE_MODAL,
@@ -18,13 +19,14 @@ import {
 } from './translate/index.js';
 
 export const COMMANDS = [
-    AUTO_TRANSLATE_COMMAND,
-    AUTO_TRANSLATE_SELECT_MENU,
+    SUMMARIZE_COMMAND,
+    TRANSLATE_CHAT_COMMAND,
+    TRANSLATE_CHAT_SELECT_MENU,
     TRANSLATE_COMMAND,
     TRANSLATE_SELECT_MENU,
 ];
 
-const MODALS = [AUTO_TRANSLATE_MODAL, TRANSLATE_MODAL];
+const MODALS = [TRANSLATE_CHAT_MODAL, TRANSLATE_MODAL];
 
 export async function handleInteraction(
     interaction: APIInteraction,

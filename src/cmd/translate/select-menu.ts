@@ -5,11 +5,10 @@ import {
     TextInputStyle,
 } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
-import { error, toCustomId } from '../../utils/index.js';
+import { error, MAX_LANGUAGE_LENGTH, toCustomId } from '../../utils/index.js';
 import {
     EPHEMERAL_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
-    MAX_LANGUAGE_LENGTH,
     MODAL_ID,
 } from './constants.js';
 
@@ -39,7 +38,7 @@ export const TRANSLATE_SELECT_MENU: Command = {
                             placeholder:
                                 'e.g. English, Spanish, French, Japanese',
                             max_length: MAX_LANGUAGE_LENGTH,
-                            required: true,
+                            required: false,
                         },
                     },
                     {

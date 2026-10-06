@@ -6,26 +6,18 @@ import type { Command } from '../../types/index.js';
 import {
     autocompleteLanguage,
     getBooleanOption,
-    getMessageId,
     getStringOption,
     MAX_LANGUAGE_LENGTH,
 } from '../../utils/index.js';
 import { EPHEMERAL_DESCRIPTION, LANGUAGE_DESCRIPTION } from './constants.js';
-import { sendTranslation, translateMessage } from './translate.js';
+import { summarize } from './summarize.js';
 
-export const TRANSLATE_COMMAND: Command = {
+export const SUMMARIZE_COMMAND: Command = {
     data: {
         type: ApplicationCommandType.ChatInput,
-        name: 'translate',
-        description: 'Translate a message into another language',
+        name: 'summarize',
+        description: 'Summarize the latest conversation in this channel',
         options: [
-            {
-                type: ApplicationCommandOptionType.String,
-                name: 'message',
-                description:
-                    'The text to translate, or the ID or link of a message',
-                required: true,
-            },
             {
                 type: ApplicationCommandOptionType.String,
                 name: 'language',
@@ -42,18 +34,10 @@ export const TRANSLATE_COMMAND: Command = {
     },
     autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
-        const text = getStringOption(interaction, 'message') || '';
-        const messageId = getMessageId(text);
-        const options = {
+        return summarize(interaction, runtime, {
             language:
                 getStringOption(interaction, 'language') || interaction.locale,
             ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
-        };
-        if (messageId) {
-            return translateMessage(interaction, runtime, messageId, options);
-        }
-        return runtime.defer(
-            sendTranslation(interaction, runtime.env, text, options),
-        );
+        });
     },
 };

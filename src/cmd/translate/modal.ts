@@ -7,7 +7,8 @@ export const TRANSLATE_MODAL: Modal = {
     id: MODAL_ID,
     run(interaction, runtime, [messageId]) {
         return translateMessage(interaction, runtime, messageId, {
-            language: getModalValue(interaction, 'language') || '',
+            language:
+                getModalValue(interaction, 'language') || interaction.locale,
             ephemeral: getModalCheckbox(interaction, 'ephemeral') ?? true,
         });
     },
