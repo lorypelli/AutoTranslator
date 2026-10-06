@@ -4,15 +4,19 @@ import {
 } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
 import {
+    autocompleteLanguage,
     getIntegerOption,
     getStringOption,
     getUserOption,
+    MAX_LANGUAGE_LENGTH,
 } from '../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
+    DEFAULT_LANGUAGE,
     DEFAULT_MESSAGES,
     FROM_DESCRIPTION,
+    LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
@@ -20,11 +24,11 @@ import {
 } from './constants.js';
 import { translate } from './translate.js';
 
-export const AUTO_TRANSLATE_COMMAND: Command = {
+export const TRANSLATE_CHAT_COMMAND: Command = {
     data: {
         type: ApplicationCommandType.ChatInput,
-        name: 'auto-translate',
-        description: 'Automatically translate messages',
+        name: 'translate-chat',
+        description: 'Translate the chat for a user',
         options: [
             {
                 type: ApplicationCommandOptionType.User,
@@ -38,6 +42,13 @@ export const AUTO_TRANSLATE_COMMAND: Command = {
                 description: CUSTOM_MESSAGE_DESCRIPTION,
                 max_length: MAX_CUSTOM_MESSAGE_LENGTH,
                 required: true,
+            },
+            {
+                type: ApplicationCommandOptionType.String,
+                name: 'language',
+                description: LANGUAGE_DESCRIPTION,
+                max_length: MAX_LANGUAGE_LENGTH,
+                autocomplete: true,
             },
             {
                 type: ApplicationCommandOptionType.Integer,
@@ -58,10 +69,13 @@ export const AUTO_TRANSLATE_COMMAND: Command = {
             },
         ],
     },
+    autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
         return translate(interaction, runtime, {
             userId: getUserOption(interaction, 'user') || '',
             customMessage: getStringOption(interaction, 'custom-message') || '',
+            language:
+                getStringOption(interaction, 'language') || DEFAULT_LANGUAGE,
             messages:
                 getIntegerOption(interaction, 'messages') ?? DEFAULT_MESSAGES,
             from: getStringOption(interaction, 'from'),

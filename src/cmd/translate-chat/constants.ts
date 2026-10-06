@@ -10,4 +10,6 @@ export const TO_DESCRIPTION =
     'The ID or link of the last message (without from, the AI finds where the conversation starts)';
 export const CUSTOM_MESSAGE_DESCRIPTION =
     'The custom message for the specified user';
-export const MODAL_ID = 'auto-translate';
+export const DEFAULT_LANGUAGE = 'English';
+export const LANGUAGE_DESCRIPTION = `The language to translate into (default: ${DEFAULT_LANGUAGE})`;
+export const MODAL_ID = 'translate-chat';

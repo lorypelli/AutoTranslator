@@ -17,6 +17,7 @@ import { CONTEXT_MESSAGES, MAX_MESSAGES, MIN_MESSAGES } from './constants.js';
 type TranslateOptions = {
     userId: string;
     customMessage: string;
+    language: string;
     messages: number;
     from?: string;
     to?: string;
@@ -41,18 +42,18 @@ function getQuery({
 function translateContents(
     env: Bindings,
     contents: string[],
-    { messages, from, to }: TranslateOptions,
+    { language, messages, from, to }: TranslateOptions,
 ) {
     if (from && to) {
-        return translateMessages(env, contents, 'English');
+        return translateMessages(env, contents, language);
     }
     if (from) {
-        return translateFirstConversation(env, contents, 'English');
+        return translateFirstConversation(env, contents, language);
     }
     if (to || messages == CONTEXT_MESSAGES) {
-        return translateLatestConversation(env, contents, 'English');
+        return translateLatestConversation(env, contents, language);
     }
-    return translateMessages(env, contents, 'English');
+    return translateMessages(env, contents, language);
 }
 
 async function sendTranslations(

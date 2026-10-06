@@ -5,11 +5,13 @@ import {
     TextInputStyle,
 } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
-import { error, toCustomId } from '../../utils/index.js';
+import { error, MAX_LANGUAGE_LENGTH, toCustomId } from '../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
+    DEFAULT_LANGUAGE,
     FROM_DESCRIPTION,
+    LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
@@ -18,10 +20,10 @@ import {
     TO_DESCRIPTION,
 } from './constants.js';
 
-export const AUTO_TRANSLATE_SELECT_MENU: Command = {
+export const TRANSLATE_CHAT_SELECT_MENU: Command = {
     data: {
         type: ApplicationCommandType.User,
-        name: 'Auto Translate',
+        name: 'Translate Chat',
     },
     run(interaction) {
         if (interaction.data.type != ApplicationCommandType.User) {
@@ -31,7 +33,7 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
             type: InteractionResponseType.Modal,
             data: {
                 custom_id: toCustomId(MODAL_ID, interaction.data.target_id),
-                title: 'Auto Translate',
+                title: 'Translate Chat',
                 components: [
                     {
                         type: ComponentType.Label,
@@ -43,6 +45,19 @@ export const AUTO_TRANSLATE_SELECT_MENU: Command = {
                             style: TextInputStyle.Paragraph,
                             max_length: MAX_CUSTOM_MESSAGE_LENGTH,
                             required: true,
+                        },
+                    },
+                    {
+                        type: ComponentType.Label,
+                        label: 'Language',
+                        description: LANGUAGE_DESCRIPTION,
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: 'language',
+                            style: TextInputStyle.Short,
+                            placeholder: DEFAULT_LANGUAGE,
+                            max_length: MAX_LANGUAGE_LENGTH,
+                            required: false,
                         },
                     },
                     {

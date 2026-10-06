@@ -2,6 +2,7 @@ import {
     MessageFlags,
     RouteBases,
     Routes,
+    type APIEmbed,
     type APIInteraction,
     type APIMessage,
     type RESTPatchAPIInteractionOriginalResponseJSONBody,
@@ -69,6 +70,18 @@ export async function deleteOriginal(interaction: APIInteraction) {
         'Could not delete the reply.',
         { method: 'DELETE' },
     );
+}
+
+export async function sendEmbeds(
+    interaction: APIInteraction,
+    embeds: APIEmbed[],
+    ephemeral: boolean,
+) {
+    if (ephemeral) {
+        return editOriginal(interaction, { embeds });
+    }
+    await deleteOriginal(interaction);
+    await followUp(interaction, { embeds });
 }
 
 export async function getMessage(
