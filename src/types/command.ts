@@ -1,4 +1,6 @@
 import type {
+    APIApplicationCommandAutocompleteInteraction,
+    APIApplicationCommandAutocompleteResponse,
     APIApplicationCommandInteraction,
     APIInteractionResponse,
     RESTPostAPIApplicationCommandsJSONBody,
@@ -11,4 +13,8 @@ export type Command = {
         interaction: APIApplicationCommandInteraction,
         runtime: Runtime,
     ) => APIInteractionResponse;
+    autocomplete?: (
+        interaction: APIApplicationCommandAutocompleteInteraction,
+        runtime: Runtime,
+    ) => Promise<APIApplicationCommandAutocompleteResponse>;
 };

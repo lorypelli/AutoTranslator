@@ -4,6 +4,7 @@ import {
     ComponentType,
     InteractionResponseType,
     MessageFlags,
+    type APIApplicationCommandAutocompleteInteraction,
     type APIApplicationCommandInteraction,
     type APIInteractionResponse,
     type APIModalSubmitInteraction,
@@ -104,4 +105,14 @@ export function getBooleanOption(
     return option?.type == ApplicationCommandOptionType.Boolean
         ? option.value
         : undefined;
+}
+
+export function getFocusedString(
+    interaction: APIApplicationCommandAutocompleteInteraction,
+) {
+    return interaction.data.options?.flatMap((option) =>
+        option.type == ApplicationCommandOptionType.String && option.focused
+            ? [option.value]
+            : [],
+    )[0];
 }
