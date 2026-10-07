@@ -6,7 +6,6 @@ import {
     getChatMessages,
     getMessageId,
     sendEmbeds,
-    summarizeFirstConversation,
     summarizeLatestConversation,
     summarizeMessages,
     toEmbed,
@@ -24,11 +23,8 @@ function summarizeContents(
     messages: ChatMessage[],
     { language, from, to }: SummarizeOptions,
 ) {
-    if (from && to) {
+    if (from || to) {
         return summarizeMessages(env, messages, language);
-    }
-    if (from) {
-        return summarizeFirstConversation(env, messages, language);
     }
     return summarizeLatestConversation(env, messages, language);
 }
@@ -48,17 +44,14 @@ async function sendSummary(
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
-    const summary = await summarizeContents(env, messages, options);
+    const { summary, count } = await summarizeContents(env, messages, options);
     await sendEmbeds(
         interaction,
         [
             {
                 ...toEmbed(summary),
                 footer: {
-                    text:
-                        from || to
-                            ? 'Summary of the conversation'
-                            : 'Summary of the latest conversation',
+                    text: `Summarized ${count} ${count == 1 ? 'message' : 'messages'}`,
                 },
             },
         ],

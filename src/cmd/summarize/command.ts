@@ -5,20 +5,23 @@ import {
 import type { Command } from '../../types/index.js';
 import {
     autocompleteLanguage,
-    FROM_DESCRIPTION,
     getBooleanOption,
     getStringOption,
     MAX_LANGUAGE_LENGTH,
-    TO_DESCRIPTION,
 } from '../../utils/index.js';
-import { EPHEMERAL_DESCRIPTION, LANGUAGE_DESCRIPTION } from './constants.js';
+import {
+    EPHEMERAL_DESCRIPTION,
+    FROM_DESCRIPTION,
+    LANGUAGE_DESCRIPTION,
+    TO_DESCRIPTION,
+} from './constants.js';
 import { summarize } from './summarize.js';
 
 export const SUMMARIZE_COMMAND: Command = {
     data: {
         type: ApplicationCommandType.ChatInput,
         name: 'summarize',
-        description: 'Summarize a conversation in this channel',
+        description: 'Summarize the latest conversation or a range of messages',
         options: [
             {
                 type: ApplicationCommandOptionType.String,
