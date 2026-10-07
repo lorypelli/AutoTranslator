@@ -18,7 +18,7 @@ export function getMessageId(text: string) {
         URL.parse(text)?.pathname.match(
             /^\/channels\/[^/]+\/[^/]+\/(\d+)\/?$/,
         )?.[1] ?? text;
-    return /^\d+$/.test(id) ? id : undefined;
+    return /^\d{17,20}$/.test(id) ? id : undefined;
 }
 
 function getQuery({
