@@ -1,13 +1,13 @@
 import {
+    type APIApplicationCommandAutocompleteInteraction,
+    type APIApplicationCommandInteraction,
+    type APIInteractionResponse,
+    type APIModalSubmitInteraction,
     ApplicationCommandOptionType,
     ApplicationCommandType,
     ComponentType,
     InteractionResponseType,
     MessageFlags,
-    type APIApplicationCommandAutocompleteInteraction,
-    type APIApplicationCommandInteraction,
-    type APIInteractionResponse,
-    type APIModalSubmitInteraction,
 } from 'discord-api-types/v10';
 
 const CUSTOM_ID_SEPARATOR = ':';
@@ -63,7 +63,22 @@ function findOption(
     name: string,
 ) {
     return interaction.data.type == ApplicationCommandType.ChatInput
-        ? interaction.data.options?.find((option) => option.name == name)
+        ? interaction.data.options
+              ?.flatMap((option) =>
+                  option.type == ApplicationCommandOptionType.Subcommand
+                      ? (option.options ?? [])
+                      : [option],
+              )
+              .find((option) => option.name == name)
+        : undefined;
+}
+
+export function getSubcommand(interaction: APIApplicationCommandInteraction) {
+    return interaction.data.type == ApplicationCommandType.ChatInput
+        ? interaction.data.options?.find(
+              (option) =>
+                  option.type == ApplicationCommandOptionType.Subcommand,
+          )?.name
         : undefined;
 }
 
@@ -110,9 +125,15 @@ export function getBooleanOption(
 export function getFocusedString(
     interaction: APIApplicationCommandAutocompleteInteraction,
 ) {
-    return interaction.data.options?.flatMap((option) =>
-        option.type == ApplicationCommandOptionType.String && option.focused
-            ? [option.value]
-            : [],
-    )[0];
+    return interaction.data.options
+        ?.flatMap((option) =>
+            option.type == ApplicationCommandOptionType.Subcommand
+                ? (option.options ?? [])
+                : [option],
+        )
+        .flatMap((option) =>
+            option.type == ApplicationCommandOptionType.String && option.focused
+                ? [option.value]
+                : [],
+        )[0];
 }

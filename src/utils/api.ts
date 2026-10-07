@@ -1,13 +1,13 @@
 import {
-    MessageFlags,
-    RouteBases,
-    Routes,
     type APIEmbed,
     type APIInteraction,
     type APIMessage,
+    MessageFlags,
     type RESTPatchAPIInteractionOriginalResponseJSONBody,
     type RESTPostAPIInteractionFollowupJSONBody,
     type RESTPutAPIApplicationCommandsJSONBody,
+    RouteBases,
+    Routes,
 } from 'discord-api-types/v10';
 import type { Bindings } from '../types/index.js';
 

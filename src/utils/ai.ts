@@ -201,6 +201,18 @@ export function detectLanguage(env: Bindings, text: string) {
     );
 }
 
+export function summarizeMessages(
+    env: Bindings,
+    messages: ChatMessage[],
+    language: string,
+) {
+    return withTimeout(
+        getLanguageName(env, language).then((name) =>
+            summarize(env, messages, name),
+        ),
+    );
+}
+
 export function summarizeLatestConversation(
     env: Bindings,
     messages: ChatMessage[],
@@ -216,5 +228,25 @@ export function summarizeLatestConversation(
             ),
             getLanguageName(env, language),
         ]).then(([start, name]) => summarize(env, messages.slice(start), name)),
+    );
+}
+
+export function summarizeFirstConversation(
+    env: Bindings,
+    messages: ChatMessage[],
+    language: string,
+) {
+    return withTimeout(
+        Promise.all([
+            findBoundary(
+                env,
+                FIRST_CONVERSATION_PROMPT,
+                'end',
+                messages.map((message) => message.content),
+            ),
+            getLanguageName(env, language),
+        ]).then(([end, name]) =>
+            summarize(env, messages.slice(0, end + 1), name),
+        ),
     );
 }

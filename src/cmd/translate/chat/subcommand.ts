@@ -1,33 +1,29 @@
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { Subcommand } from '../../../types/index.js';
 import {
-    ApplicationCommandOptionType,
-    ApplicationCommandType,
-} from 'discord-api-types/v10';
-import type { Command } from '../../types/index.js';
-import {
-    autocompleteLanguage,
+    FROM_DESCRIPTION,
     getIntegerOption,
     getStringOption,
     getUserOption,
     MAX_LANGUAGE_LENGTH,
-} from '../../utils/index.js';
+    MAX_MESSAGES,
+    TO_DESCRIPTION,
+} from '../../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
     DEFAULT_LANGUAGE,
     DEFAULT_MESSAGES,
-    FROM_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
-    MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
-    TO_DESCRIPTION,
 } from './constants.js';
 import { translate } from './translate.js';
 
-export const TRANSLATE_CHAT_COMMAND: Command = {
+export const TRANSLATE_CHAT_SUBCOMMAND: Subcommand = {
     data: {
-        type: ApplicationCommandType.ChatInput,
-        name: 'translate-chat',
+        type: ApplicationCommandOptionType.Subcommand,
+        name: 'chat',
         description: 'Translate the chat for a user',
         options: [
             {
@@ -69,7 +65,6 @@ export const TRANSLATE_CHAT_COMMAND: Command = {
             },
         ],
     },
-    autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
         return translate(interaction, runtime, {
             userId: getUserOption(interaction, 'user') || '',

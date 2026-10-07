@@ -1,5 +1,5 @@
 import type { APIInteraction, APIMessage } from 'discord-api-types/v10';
-import type { Bindings, Runtime } from '../../types/index.js';
+import type { Bindings, Runtime } from '../../../types/index.js';
 import {
     detectLanguage,
     error,
@@ -8,7 +8,7 @@ import {
     sendEmbeds,
     toEmbed,
     translateMessages,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 
 type TranslateOptions = {
     language: string;

@@ -1,9 +1,9 @@
-import type { Modal } from '../../types/index.js';
-import { getModalCheckbox, getModalValue } from '../../utils/index.js';
+import type { Modal } from '../../../types/index.js';
+import { getModalCheckbox, getModalValue } from '../../../utils/index.js';
 import { MODAL_ID } from './constants.js';
 import { translateMessage } from './translate.js';
 
-export const TRANSLATE_MODAL: Modal = {
+export const TRANSLATE_MESSAGE_MODAL: Modal = {
     id: MODAL_ID,
     run(interaction, runtime, [messageId]) {
         return translateMessage(interaction, runtime, messageId, {

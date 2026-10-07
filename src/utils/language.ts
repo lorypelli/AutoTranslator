@@ -1,7 +1,7 @@
 import {
-    InteractionResponseType,
     type APIApplicationCommandAutocompleteInteraction,
     type APIApplicationCommandAutocompleteResponse,
+    InteractionResponseType,
 } from 'discord-api-types/v10';
 import type { Runtime } from '../types/index.js';
 import { getLanguageName } from './ai.js';

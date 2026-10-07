@@ -4,15 +4,19 @@ import {
     InteractionResponseType,
     TextInputStyle,
 } from 'discord-api-types/v10';
-import type { Command } from '../../types/index.js';
-import { error, MAX_LANGUAGE_LENGTH, toCustomId } from '../../utils/index.js';
+import type { Command } from '../../../types/index.js';
+import {
+    error,
+    MAX_LANGUAGE_LENGTH,
+    toCustomId,
+} from '../../../utils/index.js';
 import {
     EPHEMERAL_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
     MODAL_ID,
 } from './constants.js';
 
-export const TRANSLATE_SELECT_MENU: Command = {
+export const TRANSLATE_MESSAGE_SELECT_MENU: Command = {
     data: {
         type: ApplicationCommandType.Message,
         name: 'Translate',

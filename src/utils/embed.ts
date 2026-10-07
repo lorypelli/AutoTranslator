@@ -1,10 +1,10 @@
 import {
-    CDNRoutes,
-    ImageFormat,
-    RouteBases,
     type APIEmbed,
     type APIMessage,
     type APIUser,
+    CDNRoutes,
+    ImageFormat,
+    RouteBases,
 } from 'discord-api-types/v10';
 
 const MAX_DESCRIPTION_LENGTH = 4096;
