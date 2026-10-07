@@ -1,18 +1,19 @@
 import type { APIInteraction } from 'discord-api-types/v10';
-import type { Bindings, Runtime } from '../../types/index.js';
+import type { Bindings, Runtime } from '../../../types/index.js';
 import {
     chunkEmbeds,
     deleteOriginal,
     error,
     followUp,
+    getChatMessages,
     getMessageId,
-    getMessages,
+    MAX_MESSAGES,
     toEmbed,
     translateFirstConversation,
     translateLatestConversation,
     translateMessages,
-} from '../../utils/index.js';
-import { CONTEXT_MESSAGES, MAX_MESSAGES, MIN_MESSAGES } from './constants.js';
+} from '../../../utils/index.js';
+import { CONTEXT_MESSAGES, MIN_MESSAGES } from './constants.js';
 
 type TranslateOptions = {
     userId: string;
@@ -22,22 +23,6 @@ type TranslateOptions = {
     from?: string;
     to?: string;
 };
-
-function getQuery({
-    messages,
-    from,
-    to,
-}: TranslateOptions): Record<string, string> {
-    if (from) {
-        return { after: `${BigInt(from) - 1n}`, limit: `${MAX_MESSAGES}` };
-    }
-    if (to) {
-        return { before: `${BigInt(to) + 1n}`, limit: `${MAX_MESSAGES}` };
-    }
-    return {
-        limit: `${messages == CONTEXT_MESSAGES ? MAX_MESSAGES : messages}`,
-    };
-}
 
 function translateContents(
     env: Bindings,
@@ -62,14 +47,12 @@ async function sendTranslations(
     channelId: string,
     options: TranslateOptions,
 ) {
-    const { userId, customMessage, from, to } = options;
-    const fetched = await getMessages(env, channelId, getQuery(options));
-    const recent = fetched.filter(
-        (message) =>
-            !message.author.bot &&
-            message.content &&
-            (!to || BigInt(message.id) <= BigInt(to)),
-    );
+    const { userId, customMessage, messages, from, to } = options;
+    const recent = await getChatMessages(env, channelId, {
+        from,
+        to,
+        limit: messages == CONTEXT_MESSAGES ? MAX_MESSAGES : messages,
+    });
     if (!recent.length) {
         throw new Error('There are no messages to translate.');
     }

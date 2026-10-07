@@ -4,20 +4,24 @@ import {
     InteractionResponseType,
     TextInputStyle,
 } from 'discord-api-types/v10';
-import type { Command } from '../../types/index.js';
-import { error, MAX_LANGUAGE_LENGTH, toCustomId } from '../../utils/index.js';
+import type { Command } from '../../../types/index.js';
+import {
+    error,
+    FROM_DESCRIPTION,
+    MAX_LANGUAGE_LENGTH,
+    MAX_MESSAGES,
+    TO_DESCRIPTION,
+    toCustomId,
+} from '../../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
     DEFAULT_LANGUAGE,
-    FROM_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
-    MAX_MESSAGES,
     MESSAGES_DESCRIPTION,
     MIN_MESSAGES,
     MODAL_ID,
-    TO_DESCRIPTION,
 } from './constants.js';
 
 export const TRANSLATE_CHAT_SELECT_MENU: Command = {

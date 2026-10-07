@@ -5,9 +5,11 @@ import {
 import type { Command } from '../../types/index.js';
 import {
     autocompleteLanguage,
+    FROM_DESCRIPTION,
     getBooleanOption,
     getStringOption,
     MAX_LANGUAGE_LENGTH,
+    TO_DESCRIPTION,
 } from '../../utils/index.js';
 import { EPHEMERAL_DESCRIPTION, LANGUAGE_DESCRIPTION } from './constants.js';
 import { summarize } from './summarize.js';
@@ -16,7 +18,7 @@ export const SUMMARIZE_COMMAND: Command = {
     data: {
         type: ApplicationCommandType.ChatInput,
         name: 'summarize',
-        description: 'Summarize the latest conversation in this channel',
+        description: 'Summarize a conversation in this channel',
         options: [
             {
                 type: ApplicationCommandOptionType.String,
@@ -24,6 +26,16 @@ export const SUMMARIZE_COMMAND: Command = {
                 description: LANGUAGE_DESCRIPTION,
                 max_length: MAX_LANGUAGE_LENGTH,
                 autocomplete: true,
+            },
+            {
+                type: ApplicationCommandOptionType.String,
+                name: 'from',
+                description: FROM_DESCRIPTION,
+            },
+            {
+                type: ApplicationCommandOptionType.String,
+                name: 'to',
+                description: TO_DESCRIPTION,
             },
             {
                 type: ApplicationCommandOptionType.Boolean,
@@ -38,6 +50,8 @@ export const SUMMARIZE_COMMAND: Command = {
             language:
                 getStringOption(interaction, 'language') || interaction.locale,
             ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
+            from: getStringOption(interaction, 'from'),
+            to: getStringOption(interaction, 'to'),
         });
     },
 };

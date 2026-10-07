@@ -1,44 +1,65 @@
 import type { APIInteraction } from 'discord-api-types/v10';
 import type { Bindings, Runtime } from '../../types/index.js';
 import {
+    type ChatMessage,
     error,
-    getMessages,
+    getChatMessages,
+    getMessageId,
     sendEmbeds,
+    summarizeFirstConversation,
     summarizeLatestConversation,
+    summarizeMessages,
     toEmbed,
 } from '../../utils/index.js';
-import { MAX_MESSAGES } from './constants.js';
 
 type SummarizeOptions = {
     language: string;
     ephemeral: boolean;
+    from?: string;
+    to?: string;
 };
+
+function summarizeContents(
+    env: Bindings,
+    messages: ChatMessage[],
+    { language, from, to }: SummarizeOptions,
+) {
+    if (from && to) {
+        return summarizeMessages(env, messages, language);
+    }
+    if (from) {
+        return summarizeFirstConversation(env, messages, language);
+    }
+    return summarizeLatestConversation(env, messages, language);
+}
 
 async function sendSummary(
     interaction: APIInteraction,
     env: Bindings,
     channelId: string,
-    { language, ephemeral }: SummarizeOptions,
+    options: SummarizeOptions,
 ) {
-    const fetched = await getMessages(env, channelId, {
-        limit: `${MAX_MESSAGES}`,
-    });
-    const messages = fetched
-        .filter((message) => !message.author.bot && message.content)
-        .map((message) => ({
-            author: message.author.global_name ?? message.author.username,
-            content: message.content,
-        }));
+    const { ephemeral, from, to } = options;
+    const fetched = await getChatMessages(env, channelId, { from, to });
+    const messages = fetched.map((message) => ({
+        author: message.author.global_name ?? message.author.username,
+        content: message.content,
+    }));
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
-    const summary = await summarizeLatestConversation(env, messages, language);
+    const summary = await summarizeContents(env, messages, options);
     await sendEmbeds(
         interaction,
         [
             {
                 ...toEmbed(summary),
-                footer: { text: 'Summary of the latest conversation' },
+                footer: {
+                    text:
+                        from || to
+                            ? 'Summary of the conversation'
+                            : 'Summary of the latest conversation',
+                },
             },
         ],
         ephemeral,
@@ -51,8 +72,15 @@ export function summarize(
     options: SummarizeOptions,
 ) {
     const channelId = interaction.channel?.id;
+    const from = options.from && getMessageId(options.from);
+    const to = options.to && getMessageId(options.to);
     if (!channelId) {
         return error('This can only be used in a channel.');
     }
-    return defer(sendSummary(interaction, env, channelId, options));
+    if ((options.from && !from) || (options.to && !to)) {
+        return error('From and to must be message IDs or links.');
+    }
+    return defer(
+        sendSummary(interaction, env, channelId, { ...options, from, to }),
+    );
 }

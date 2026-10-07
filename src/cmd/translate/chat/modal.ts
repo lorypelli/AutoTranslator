@@ -1,5 +1,5 @@
-import type { Modal } from '../../types/index.js';
-import { getModalValue } from '../../utils/index.js';
+import type { Modal } from '../../../types/index.js';
+import { getModalValue } from '../../../utils/index.js';
 import { DEFAULT_LANGUAGE, DEFAULT_MESSAGES, MODAL_ID } from './constants.js';
 import { translate } from './translate.js';
 

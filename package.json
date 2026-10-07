@@ -3,20 +3,19 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "format": "prettier --write ."
+        "format": "biome check --write"
     },
     "dependencies": {
         "@discord-interactions/verify": "^0.3.16",
         "discord-api-types": "^0.38.56",
-        "hono": "^4.13.12"
+        "hono": "^4.13.13"
     },
     "devDependencies": {
+        "@biomejs/biome": "^2.5.15",
         "@types/node": "^26.6.4",
-        "prettier": "^3.9.6",
-        "prettier-plugin-organize-imports": "^4.3.0",
         "tsdown": "^0.23.0",
         "typescript": "^7.0.2",
-        "wrangler": "^4.145.0"
+        "wrangler": "^4.148.0"
     },
     "packageManager": "pnpm@12.9.0"
 }

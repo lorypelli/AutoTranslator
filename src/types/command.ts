@@ -2,6 +2,7 @@ import type {
     APIApplicationCommandAutocompleteInteraction,
     APIApplicationCommandAutocompleteResponse,
     APIApplicationCommandInteraction,
+    APIApplicationCommandSubcommandOption,
     APIInteractionResponse,
     RESTPostAPIApplicationCommandsJSONBody,
 } from 'discord-api-types/v10';
@@ -17,4 +18,12 @@ export type Command = {
         interaction: APIApplicationCommandAutocompleteInteraction,
         runtime: Runtime,
     ) => Promise<APIApplicationCommandAutocompleteResponse>;
+};
+
+export type Subcommand = {
+    data: APIApplicationCommandSubcommandOption;
+    run: (
+        interaction: APIApplicationCommandInteraction,
+        runtime: Runtime,
+    ) => APIInteractionResponse;
 };
