@@ -8,6 +8,7 @@ import {
     getBooleanOption,
     getStringOption,
     MAX_LANGUAGE_LENGTH,
+    WITH_BOT,
 } from '../../utils/index.js';
 import {
     EPHEMERAL_DESCRIPTION,
@@ -19,6 +20,7 @@ import { summarize } from './summarize.js';
 
 export const SUMMARIZE_COMMAND: Command = {
     data: {
+        ...WITH_BOT,
         type: ApplicationCommandType.ChatInput,
         name: 'summarize',
         description: 'Summarize the latest conversation or a range of messages',
@@ -50,8 +52,7 @@ export const SUMMARIZE_COMMAND: Command = {
     autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
         return summarize(interaction, runtime, {
-            language:
-                getStringOption(interaction, 'language') || interaction.locale,
+            language: getStringOption(interaction, 'language'),
             ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
             from: getStringOption(interaction, 'from'),
             to: getStringOption(interaction, 'to'),

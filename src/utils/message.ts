@@ -1,6 +1,9 @@
 import type { Bindings } from '../types/index.js';
 import { getMessages } from './api.js';
 
+const MESSAGE_PATH_REGEX = /^\/channels\/[^/]+\/[^/]+\/(\d+)\/?$/;
+const SNOWFLAKE_REGEX = /^\d{17,20}$/;
+
 export const MAX_MESSAGES = 100;
 export const FROM_DESCRIPTION =
     'The ID or link of the first message (without to, the AI finds where the conversation ends)';
@@ -8,17 +11,14 @@ export const TO_DESCRIPTION =
     'The ID or link of the last message (without from, the AI finds where the conversation starts)';
 
 type MessageRange = {
-    from?: string;
-    to?: string;
+    from: string | null;
+    to: string | null;
     limit?: number;
 };
 
 export function getMessageId(text: string) {
-    const id =
-        URL.parse(text)?.pathname.match(
-            /^\/channels\/[^/]+\/[^/]+\/(\d+)\/?$/,
-        )?.[1] ?? text;
-    return /^\d{17,20}$/.test(id) ? id : undefined;
+    const id = URL.parse(text)?.pathname.match(MESSAGE_PATH_REGEX)?.[1] ?? text;
+    return SNOWFLAKE_REGEX.test(id) ? id : null;
 }
 
 function getQuery({

@@ -10,7 +10,7 @@ import {
 const MAX_DESCRIPTION_LENGTH = 4096;
 const MAX_EMBEDS = 10;
 const MAX_EMBEDS_LENGTH = 6000;
-const EMBED_COLOR = 0x5865f2;
+const EMBED_COLOR = 0x6845d8;
 const SNOWFLAKE_TIMESTAMP_SHIFT = 22n;
 const DEFAULT_AVATARS = 6n;
 
@@ -23,7 +23,7 @@ export function getAvatarUrl(user: APIUser) {
     return `${RouteBases.cdn}/embed/avatars/${index}.png`;
 }
 
-export function toEmbed(description: string, message?: APIMessage): APIEmbed {
+export function toEmbed(description: string, message?: APIMessage) {
     return {
         color: EMBED_COLOR,
         author: message && {

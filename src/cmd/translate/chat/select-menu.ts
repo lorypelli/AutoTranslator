@@ -12,6 +12,7 @@ import {
     MAX_MESSAGES,
     TO_DESCRIPTION,
     toCustomId,
+    WITH_BOT,
 } from '../../../utils/index.js';
 import {
     CONTEXT_MESSAGES,
@@ -26,6 +27,7 @@ import {
 
 export const TRANSLATE_CHAT_SELECT_MENU: Command = {
     data: {
+        ...WITH_BOT,
         type: ApplicationCommandType.User,
         name: 'Translate Chat',
     },

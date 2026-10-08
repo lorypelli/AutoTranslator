@@ -1,6 +1,7 @@
 import { setTimeout } from 'node:timers/promises';
 import type { Bindings, JsonObject } from '../types/index.js';
 import { parseJsonObject } from './json.js';
+import { orNull } from './promise.js';
 
 export type ChatMessage = {
     author: string;
@@ -50,32 +51,30 @@ function attempt(env: Bindings, prompt: string, input: JsonObject) {
             { role: 'user', content: JSON.stringify(input) },
         ],
     });
-    const timeout = setTimeout(ATTEMPT_TIMEOUT_MS).then(() => {
-        throw new Error('The AI request timed out.');
-    });
-    return Promise.race([request, timeout]);
+    return Promise.race([orNull(request), setTimeout(ATTEMPT_TIMEOUT_MS)]);
 }
 
-async function ask(env: Bindings, prompt: string, input: JsonObject) {
-    const completion = await attempt(env, prompt, input).then(
-        (result) => result,
-        () =>
-            attempt(env, prompt, input).then(
-                (result) => result,
-                () => undefined,
-            ),
-    );
-    if (!completion) {
-        throw new Error('The AI request failed, try again later.');
+async function ask(
+    env: Bindings,
+    prompt: string,
+    input: JsonObject,
+    retry = true,
+) {
+    const completion = await attempt(env, prompt, input);
+    if (completion) {
+        return parseJsonObject(completion.choices?.[0]?.message?.content || '');
     }
-    return parseJsonObject(completion.choices?.[0]?.message?.content || '');
+    if (retry) {
+        return ask(env, prompt, input, false);
+    }
+    throw new Error('The AI request failed, try again later.');
 }
 
 async function translateChunk(
     env: Bindings,
     messages: string[],
     language: string,
-): Promise<string[]> {
+) {
     const { error, translations } = await ask(env, TRANSLATE_PROMPT, {
         language,
         messages,

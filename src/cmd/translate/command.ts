@@ -1,6 +1,7 @@
 import { ApplicationCommandType } from 'discord-api-types/v10';
 import type { Command } from '../../types/index.js';
 import {
+    ANYWHERE,
     autocompleteLanguage,
     error,
     getSubcommand,
@@ -12,6 +13,7 @@ const SUBCOMMANDS = [TRANSLATE_CHAT_SUBCOMMAND, TRANSLATE_MESSAGE_SUBCOMMAND];
 
 export const TRANSLATE_COMMAND: Command = {
     data: {
+        ...ANYWHERE,
         type: ApplicationCommandType.ChatInput,
         name: 'translate',
         description: 'Translate a message or the chat',
