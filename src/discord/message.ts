@@ -1,31 +1,35 @@
 import type { Bindings } from '../types/index.js';
-import { getMessages } from './api.js';
+import { getMessages } from './channel.js';
 
-const MESSAGE_PATH_REGEX = /^\/channels\/[^/]+\/[^/]+\/(\d+)\/?$/;
+const MESSAGE_PATH_REGEX = /^\/channels\/[^/]+\/[^/]+\/(?<id>\d+)\/?$/;
 const SNOWFLAKE_REGEX = /^\d{17,20}$/;
 
 export const MAX_MESSAGES = 100;
-export const FROM_DESCRIPTION =
-    'The ID or link of the first message (without to, the AI finds where the conversation ends)';
-export const TO_DESCRIPTION =
-    'The ID or link of the last message (without from, the AI finds where the conversation starts)';
 
 type MessageRange = {
     from: string | null;
     to: string | null;
-    limit?: number;
 };
 
-export function getMessageId(text: string) {
-    const id = URL.parse(text)?.pathname.match(MESSAGE_PATH_REGEX)?.[1] ?? text;
+export function parseMessageId(text: string) {
+    const match = URL.parse(text)?.pathname.match(MESSAGE_PATH_REGEX);
+    const id = match?.groups?.id ?? text;
     return SNOWFLAKE_REGEX.test(id) ? id : null;
 }
 
-function getQuery({
-    from,
-    to,
-    limit = MAX_MESSAGES,
-}: MessageRange): Record<string, string> {
+export function parseMessageRange(from: string | null, to: string | null) {
+    const fromId = from && parseMessageId(from);
+    const toId = to && parseMessageId(to);
+    if ((from && !fromId) || (to && !toId)) {
+        return null;
+    }
+    return { from: fromId, to: toId };
+}
+
+function getQuery(
+    { from, to }: MessageRange,
+    limit: number,
+): Record<string, string> {
     if (from) {
         return { after: `${BigInt(from) - 1n}`, limit: `${MAX_MESSAGES}` };
     }
@@ -39,8 +43,9 @@ export async function getChatMessages(
     env: Bindings,
     channelId: string,
     range: MessageRange,
+    limit = MAX_MESSAGES,
 ) {
-    const messages = await getMessages(env, channelId, getQuery(range));
+    const messages = await getMessages(env, channelId, getQuery(range, limit));
     return messages.filter(
         (message) =>
             !message.author.bot &&

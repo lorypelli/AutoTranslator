@@ -2,14 +2,13 @@ import {
     ApplicationCommandOptionType,
     ApplicationCommandType,
 } from 'discord-api-types/v10';
-import type { Command } from '../../types/index.js';
 import {
-    autocompleteLanguage,
     getBooleanOption,
     getStringOption,
-    MAX_LANGUAGE_LENGTH,
     WITH_BOT,
-} from '../../utils/index.js';
+} from '../../discord/index.js';
+import type { Command } from '../../types/index.js';
+import { autocompleteLanguage, MAX_LANGUAGE_LENGTH } from '../shared/index.js';
 import {
     EPHEMERAL_DESCRIPTION,
     FROM_DESCRIPTION,
