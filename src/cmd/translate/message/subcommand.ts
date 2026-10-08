@@ -1,13 +1,13 @@
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { Subcommand } from '../../../types/index.js';
 import {
     getBooleanOption,
-    getMessageId,
     getStringOption,
-    MAX_LANGUAGE_LENGTH,
-} from '../../../utils/index.js';
+    parseMessageId,
+} from '../../../discord/index.js';
+import type { Subcommand } from '../../../types/index.js';
+import { MAX_LANGUAGE_LENGTH } from '../../shared/index.js';
 import { EPHEMERAL_DESCRIPTION, LANGUAGE_DESCRIPTION } from './constants.js';
-import { sendTranslation, translateMessage } from './translate.js';
+import { translateFromId, translateFromText } from './translate.js';
 
 export const TRANSLATE_MESSAGE_SUBCOMMAND: Subcommand = {
     data: {
@@ -38,16 +38,14 @@ export const TRANSLATE_MESSAGE_SUBCOMMAND: Subcommand = {
     },
     run(interaction, runtime) {
         const text = getStringOption(interaction, 'message') || '';
-        const messageId = getMessageId(text);
+        const messageId = parseMessageId(text);
         const options = {
             language: getStringOption(interaction, 'language'),
             ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
         };
         if (messageId) {
-            return translateMessage(interaction, runtime, messageId, options);
+            return translateFromId(interaction, runtime, messageId, options);
         }
-        return runtime.defer(
-            sendTranslation(interaction, runtime.env, text, options),
-        );
+        return translateFromText(interaction, runtime, text, options);
     },
 };

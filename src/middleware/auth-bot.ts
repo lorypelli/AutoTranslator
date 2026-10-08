@@ -7,9 +7,8 @@ import { parseJsonObject } from '../utils/index.js';
 
 export const authBot = createMiddleware<Env>(async (ctx, next) => {
     const { APPLICATION_ID, BOT_TOKEN } = env<Bindings>(ctx);
-    const { applicationId, botToken } = await parseJsonObject(
-        await ctx.req.text(),
-    );
+    const body = await ctx.req.text();
+    const { applicationId, botToken } = await parseJsonObject(body);
     if (!applicationId || !botToken) {
         throw new HTTPException(401);
     }

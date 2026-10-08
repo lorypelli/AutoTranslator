@@ -1,11 +1,7 @@
 import { ApplicationCommandType } from 'discord-api-types/v10';
+import { ANYWHERE } from '../../discord/index.js';
 import type { Command } from '../../types/index.js';
-import {
-    ANYWHERE,
-    autocompleteLanguage,
-    error,
-    getSubcommand,
-} from '../../utils/index.js';
+import { autocompleteLanguage, runSubcommand } from '../shared/index.js';
 import { TRANSLATE_CHAT_SUBCOMMAND } from './chat/index.js';
 import { TRANSLATE_MESSAGE_SUBCOMMAND } from './message/index.js';
 
@@ -21,12 +17,6 @@ export const TRANSLATE_COMMAND: Command = {
     },
     autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
-        const name = getSubcommand(interaction);
-        return (
-            SUBCOMMANDS.find((subcommand) => subcommand.data.name == name)?.run(
-                interaction,
-                runtime,
-            ) ?? error('Unknown subcommand.')
-        );
+        return runSubcommand(SUBCOMMANDS, interaction, runtime);
     },
 };

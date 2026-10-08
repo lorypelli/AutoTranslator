@@ -22,9 +22,9 @@ export const WITH_BOT = {
 };
 
 export function getReadableChannelId(interaction: APIInteraction) {
-    return interaction.authorizing_integration_owners[
-        ApplicationIntegrationType.GuildInstall
-    ]
-        ? (interaction.channel?.id ?? null)
-        : null;
+    const owners = interaction.authorizing_integration_owners;
+    if (!owners[ApplicationIntegrationType.GuildInstall]) {
+        return null;
+    }
+    return interaction.channel?.id ?? null;
 }

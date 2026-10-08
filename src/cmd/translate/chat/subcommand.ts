@@ -1,21 +1,21 @@
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { Subcommand } from '../../../types/index.js';
 import {
-    FROM_DESCRIPTION,
     getIntegerOption,
     getStringOption,
     getUserOption,
-    MAX_LANGUAGE_LENGTH,
     MAX_MESSAGES,
-    TO_DESCRIPTION,
-} from '../../../utils/index.js';
+} from '../../../discord/index.js';
+import type { Subcommand } from '../../../types/index.js';
+import { MAX_LANGUAGE_LENGTH } from '../../shared/index.js';
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
     DEFAULT_MESSAGES,
+    FROM_DESCRIPTION,
     LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
     MESSAGES_DESCRIPTION,
+    TO_DESCRIPTION,
 } from './constants.js';
 import { translate } from './translate.js';
 
@@ -69,7 +69,7 @@ export const TRANSLATE_CHAT_SUBCOMMAND: Subcommand = {
             userId: getUserOption(interaction, 'user') || '',
             customMessage: getStringOption(interaction, 'custom-message') || '',
             language: getStringOption(interaction, 'language'),
-            messages:
+            count:
                 getIntegerOption(interaction, 'messages') ?? DEFAULT_MESSAGES,
             from: getStringOption(interaction, 'from'),
             to: getStringOption(interaction, 'to'),

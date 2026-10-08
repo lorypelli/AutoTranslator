@@ -2,16 +2,18 @@ import {
     type APIInteraction,
     ApplicationCommandOptionType,
 } from 'discord-api-types/v10';
-import type { Bindings, Subcommand } from '../../types/index.js';
+import { getLanguageName, withTimeout } from '../../ai/index.js';
 import {
-    editOriginal,
     error,
-    getLanguageName,
     getStringOption,
     getUserId,
-    MAX_LANGUAGE_LENGTH,
+    sendEmbeds,
     toEmbed,
-} from '../../utils/index.js';
+} from '../../discord/index.js';
+import { setPreferredLanguage } from '../../storage/index.js';
+import type { Bindings, Subcommand } from '../../types/index.js';
+import { MAX_LANGUAGE_LENGTH } from '../shared/index.js';
+import { UNKNOWN_USER_ERROR } from './constants.js';
 
 async function setLanguage(
     interaction: APIInteraction,
@@ -19,11 +21,11 @@ async function setLanguage(
     userId: string,
     language: string,
 ) {
-    const name = await getLanguageName(env, language);
-    await env.LANGUAGES.put(userId, name);
-    await editOriginal(interaction, {
-        embeds: [toEmbed(`Your preferred language is now ${name}.`)],
-    });
+    const name = await withTimeout(getLanguageName(env, language));
+    await setPreferredLanguage(env, userId, name);
+    await sendEmbeds(interaction, [
+        toEmbed(`Your preferred language is now ${name}.`),
+    ]);
 }
 
 export const LANGUAGE_SET_SUBCOMMAND: Subcommand = {
@@ -45,15 +47,9 @@ export const LANGUAGE_SET_SUBCOMMAND: Subcommand = {
     run(interaction, { env, defer }) {
         const userId = getUserId(interaction);
         if (!userId) {
-            return error('Could not find your user.');
+            return error(UNKNOWN_USER_ERROR);
         }
-        return defer(
-            setLanguage(
-                interaction,
-                env,
-                userId,
-                getStringOption(interaction, 'language') || '',
-            ),
-        );
+        const language = getStringOption(interaction, 'language') || '';
+        return defer(setLanguage(interaction, env, userId, language));
     },
 };

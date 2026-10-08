@@ -1,18 +1,28 @@
-import type { APIApplicationCommandInteraction } from 'discord-api-types/v10';
-import type { Bindings, Runtime } from '../../types/index.js';
+import type {
+    APIApplicationCommandInteraction,
+    APIMessage,
+} from 'discord-api-types/v10';
 import {
-    type ChatMessage,
+    getLanguageName,
+    getLatestConversation,
+    summarizeMessages,
+    withTimeout,
+} from '../../ai/index.js';
+import {
     error,
     getChatMessages,
-    getMessageId,
-    getPreferredLanguage,
     getReadableChannelId,
     getUserId,
+    parseMessageRange,
     sendEmbeds,
-    summarizeLatestConversation,
-    summarizeMessages,
     toEmbed,
-} from '../../utils/index.js';
+} from '../../discord/index.js';
+import { getPreferredLanguage } from '../../storage/index.js';
+import type { Bindings, Runtime } from '../../types/index.js';
+import {
+    INVALID_RANGE_ERROR,
+    UNREADABLE_CHANNEL_ERROR,
+} from '../shared/index.js';
 
 type SummarizeOptions = {
     language: string | null;
@@ -21,16 +31,36 @@ type SummarizeOptions = {
     to: string | null;
 };
 
-function summarizeContents(
+function getFooterText(count: number) {
+    return `Summarized ${count} ${count == 1 ? 'message' : 'messages'}`;
+}
+
+async function selectMessages(
     env: Bindings,
-    messages: ChatMessage[],
-    language: string,
+    messages: APIMessage[],
     { from, to }: SummarizeOptions,
 ) {
     if (from || to) {
-        return summarizeMessages(env, messages, language);
+        return messages;
     }
-    return summarizeLatestConversation(env, messages, language);
+    return getLatestConversation(env, messages);
+}
+
+async function summarizeToEmbed(
+    env: Bindings,
+    messages: APIMessage[],
+    language: string,
+    options: SummarizeOptions,
+) {
+    const [conversation, name] = await Promise.all([
+        selectMessages(env, messages, options),
+        getLanguageName(env, language),
+    ]);
+    const summary = await summarizeMessages(env, conversation, name);
+    return {
+        ...toEmbed(summary),
+        footer: { text: getFooterText(conversation.length) },
+    };
 }
 
 async function sendSummary(
@@ -40,11 +70,7 @@ async function sendSummary(
     options: SummarizeOptions,
 ) {
     const { ephemeral, from, to } = options;
-    const fetched = await getChatMessages(env, channelId, { from, to });
-    const messages = fetched.map((message) => ({
-        author: message.author.global_name ?? message.author.username,
-        content: message.content,
-    }));
+    const messages = await getChatMessages(env, channelId, { from, to });
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
@@ -52,24 +78,10 @@ async function sendSummary(
         options.language ||
         (await getPreferredLanguage(env, getUserId(interaction))) ||
         interaction.locale;
-    const { summary, count } = await summarizeContents(
-        env,
-        messages,
-        language,
-        options,
+    const embed = await withTimeout(
+        summarizeToEmbed(env, messages, language, options),
     );
-    await sendEmbeds(
-        interaction,
-        [
-            {
-                ...toEmbed(summary),
-                footer: {
-                    text: `Summarized ${count} ${count == 1 ? 'message' : 'messages'}`,
-                },
-            },
-        ],
-        ephemeral,
-    );
+    await sendEmbeds(interaction, [embed], ephemeral);
 }
 
 export function summarize(
@@ -78,15 +90,14 @@ export function summarize(
     options: SummarizeOptions,
 ) {
     const channelId = getReadableChannelId(interaction);
-    const from = options.from && getMessageId(options.from);
-    const to = options.to && getMessageId(options.to);
     if (!channelId) {
-        return error('This can only be used in servers and DMs the bot is in.');
+        return error(UNREADABLE_CHANNEL_ERROR);
     }
-    if ((options.from && !from) || (options.to && !to)) {
-        return error('From and to must be message IDs or links.');
+    const range = parseMessageRange(options.from, options.to);
+    if (!range) {
+        return error(INVALID_RANGE_ERROR);
     }
     return defer(
-        sendSummary(interaction, env, channelId, { ...options, from, to }),
+        sendSummary(interaction, env, channelId, { ...options, ...range }),
     );
 }

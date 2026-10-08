@@ -1,15 +1,15 @@
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import type { ChatEnv } from '../types/index.js';
-import { parseJsonObject } from '../utils/index.js';
+import { isStringArray, parseJsonObject } from '../utils/index.js';
 
 export const validateChat = createMiddleware<ChatEnv>(async (ctx, next) => {
-    const { language, messages } = await parseJsonObject(await ctx.req.text());
+    const body = await ctx.req.text();
+    const { language, messages } = await parseJsonObject(body);
     if (
         typeof language != 'string' ||
-        !Array.isArray(messages) ||
-        !messages.length ||
-        !messages.every((message) => typeof message == 'string')
+        !isStringArray(messages) ||
+        !messages.length
     ) {
         throw new HTTPException(400);
     }

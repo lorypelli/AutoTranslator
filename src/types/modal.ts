@@ -9,6 +9,6 @@ export type Modal = {
     run: (
         interaction: APIModalSubmitInteraction,
         runtime: Runtime,
-        args: string[],
+        targetId: string,
     ) => APIInteractionResponse;
 };
