@@ -1,11 +1,13 @@
 import type { APIInteraction } from 'discord-api-types/v10';
 import type { Ai } from './ai.js';
+import type { Kv } from './kv.js';
 
 export type Bindings = {
     PUBLIC_KEY: string;
     APPLICATION_ID: string;
     BOT_TOKEN: string;
     AI: Ai;
+    LANGUAGES: Kv;
 };
 
 export type DiscordEnv = {
@@ -14,7 +16,7 @@ export type DiscordEnv = {
     };
 };
 
-export type RequestEnv = {
+export type ChatEnv = {
     Variables: {
         language: string;
         messages: string[];

@@ -6,17 +6,17 @@ import {
     error,
     getSubcommand,
 } from '../../utils/index.js';
-import { TRANSLATE_CHAT_SUBCOMMAND } from './chat/index.js';
-import { TRANSLATE_MESSAGE_SUBCOMMAND } from './message/index.js';
+import { LANGUAGE_RESET_SUBCOMMAND } from './reset.js';
+import { LANGUAGE_SET_SUBCOMMAND } from './set.js';
 
-const SUBCOMMANDS = [TRANSLATE_CHAT_SUBCOMMAND, TRANSLATE_MESSAGE_SUBCOMMAND];
+const SUBCOMMANDS = [LANGUAGE_SET_SUBCOMMAND, LANGUAGE_RESET_SUBCOMMAND];
 
-export const TRANSLATE_COMMAND: Command = {
+export const LANGUAGE_COMMAND: Command = {
     data: {
         ...ANYWHERE,
         type: ApplicationCommandType.ChatInput,
-        name: 'translate',
-        description: 'Translate a message or the chat',
+        name: 'language',
+        description: 'Set or remove your preferred language',
         options: SUBCOMMANDS.map((subcommand) => subcommand.data),
     },
     autocomplete: autocompleteLanguage,

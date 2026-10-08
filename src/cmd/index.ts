@@ -1,11 +1,11 @@
 import {
     type APIInteraction,
-    type APIInteractionResponse,
     InteractionResponseType,
     InteractionType,
 } from 'discord-api-types/v10';
 import type { Runtime } from '../types/index.js';
 import { error, fromCustomId } from '../utils/index.js';
+import { LANGUAGE_COMMAND } from './language/index.js';
 import { SUMMARIZE_COMMAND } from './summarize/index.js';
 import {
     TRANSLATE_CHAT_MODAL,
@@ -16,6 +16,7 @@ import {
 } from './translate/index.js';
 
 export const COMMANDS = [
+    LANGUAGE_COMMAND,
     SUMMARIZE_COMMAND,
     TRANSLATE_COMMAND,
     TRANSLATE_CHAT_SELECT_MENU,
@@ -27,7 +28,7 @@ const MODALS = [TRANSLATE_CHAT_MODAL, TRANSLATE_MESSAGE_MODAL];
 export async function handleInteraction(
     interaction: APIInteraction,
     runtime: Runtime,
-): Promise<APIInteractionResponse> {
+) {
     if (interaction.type == InteractionType.Ping) {
         return { type: InteractionResponseType.Pong };
     }

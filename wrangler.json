@@ -17,6 +17,11 @@
     "ai": {
         "binding": "AI"
     },
+    "kv_namespaces": [
+        {
+            "binding": "LANGUAGES"
+        }
+    ],
     "assets": {
         "binding": "ASSETS",
         "directory": "./dist"

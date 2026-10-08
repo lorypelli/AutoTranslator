@@ -1,10 +1,13 @@
-import type { APIInteraction } from 'discord-api-types/v10';
+import type { APIApplicationCommandInteraction } from 'discord-api-types/v10';
 import type { Bindings, Runtime } from '../../types/index.js';
 import {
     type ChatMessage,
     error,
     getChatMessages,
     getMessageId,
+    getPreferredLanguage,
+    getReadableChannelId,
+    getUserId,
     sendEmbeds,
     summarizeLatestConversation,
     summarizeMessages,
@@ -12,16 +15,17 @@ import {
 } from '../../utils/index.js';
 
 type SummarizeOptions = {
-    language: string;
+    language: string | null;
     ephemeral: boolean;
-    from?: string;
-    to?: string;
+    from: string | null;
+    to: string | null;
 };
 
 function summarizeContents(
     env: Bindings,
     messages: ChatMessage[],
-    { language, from, to }: SummarizeOptions,
+    language: string,
+    { from, to }: SummarizeOptions,
 ) {
     if (from || to) {
         return summarizeMessages(env, messages, language);
@@ -30,7 +34,7 @@ function summarizeContents(
 }
 
 async function sendSummary(
-    interaction: APIInteraction,
+    interaction: APIApplicationCommandInteraction,
     env: Bindings,
     channelId: string,
     options: SummarizeOptions,
@@ -44,7 +48,16 @@ async function sendSummary(
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
-    const { summary, count } = await summarizeContents(env, messages, options);
+    const language =
+        options.language ||
+        (await getPreferredLanguage(env, getUserId(interaction))) ||
+        interaction.locale;
+    const { summary, count } = await summarizeContents(
+        env,
+        messages,
+        language,
+        options,
+    );
     await sendEmbeds(
         interaction,
         [
@@ -60,15 +73,15 @@ async function sendSummary(
 }
 
 export function summarize(
-    interaction: APIInteraction,
+    interaction: APIApplicationCommandInteraction,
     { env, defer }: Runtime,
     options: SummarizeOptions,
 ) {
-    const channelId = interaction.channel?.id;
+    const channelId = getReadableChannelId(interaction);
     const from = options.from && getMessageId(options.from);
     const to = options.to && getMessageId(options.to);
     if (!channelId) {
-        return error('This can only be used in a channel.');
+        return error('This can only be used in servers and DMs the bot is in.');
     }
     if ((options.from && !from) || (options.to && !to)) {
         return error('From and to must be message IDs or links.');

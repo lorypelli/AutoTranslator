@@ -40,8 +40,7 @@ export const TRANSLATE_MESSAGE_SUBCOMMAND: Subcommand = {
         const text = getStringOption(interaction, 'message') || '';
         const messageId = getMessageId(text);
         const options = {
-            language:
-                getStringOption(interaction, 'language') || interaction.locale,
+            language: getStringOption(interaction, 'language'),
             ephemeral: getBooleanOption(interaction, 'ephemeral') ?? true,
         };
         if (messageId) {

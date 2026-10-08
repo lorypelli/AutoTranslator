@@ -12,7 +12,6 @@ import {
 import {
     CONTEXT_MESSAGES,
     CUSTOM_MESSAGE_DESCRIPTION,
-    DEFAULT_LANGUAGE,
     DEFAULT_MESSAGES,
     LANGUAGE_DESCRIPTION,
     MAX_CUSTOM_MESSAGE_LENGTH,
@@ -69,8 +68,7 @@ export const TRANSLATE_CHAT_SUBCOMMAND: Subcommand = {
         return translate(interaction, runtime, {
             userId: getUserOption(interaction, 'user') || '',
             customMessage: getStringOption(interaction, 'custom-message') || '',
-            language:
-                getStringOption(interaction, 'language') || DEFAULT_LANGUAGE,
+            language: getStringOption(interaction, 'language'),
             messages:
                 getIntegerOption(interaction, 'messages') ?? DEFAULT_MESSAGES,
             from: getStringOption(interaction, 'from'),

@@ -1,6 +1,7 @@
 import {
     type APIApplicationCommandAutocompleteInteraction,
     type APIApplicationCommandInteraction,
+    type APIInteraction,
     type APIInteractionResponse,
     type APIModalSubmitInteraction,
     ApplicationCommandOptionType,
@@ -27,15 +28,21 @@ export function fromCustomId(customId: string) {
     return customId.split(CUSTOM_ID_SEPARATOR);
 }
 
+export function getUserId(interaction: APIInteraction) {
+    return interaction.member?.user.id ?? interaction.user?.id ?? null;
+}
+
 function findModalComponent(
     interaction: APIModalSubmitInteraction,
     customId: string,
 ) {
-    return interaction.data.components
-        .flatMap((row) =>
-            row.type == ComponentType.Label ? [row.component] : [],
-        )
-        .find((component) => component.custom_id == customId);
+    return (
+        interaction.data.components
+            .flatMap((row) =>
+                row.type == ComponentType.Label ? [row.component] : [],
+            )
+            .find((component) => component.custom_id == customId) ?? null
+    );
 }
 
 export function getModalValue(
@@ -43,9 +50,7 @@ export function getModalValue(
     customId: string,
 ) {
     const component = findModalComponent(interaction, customId);
-    return component?.type == ComponentType.TextInput
-        ? component.value
-        : undefined;
+    return component?.type == ComponentType.TextInput ? component.value : null;
 }
 
 export function getModalCheckbox(
@@ -53,9 +58,7 @@ export function getModalCheckbox(
     customId: string,
 ) {
     const component = findModalComponent(interaction, customId);
-    return component?.type == ComponentType.Checkbox
-        ? component.value
-        : undefined;
+    return component?.type == ComponentType.Checkbox ? component.value : null;
 }
 
 function findOption(
@@ -63,23 +66,23 @@ function findOption(
     name: string,
 ) {
     return interaction.data.type == ApplicationCommandType.ChatInput
-        ? interaction.data.options
+        ? (interaction.data.options
               ?.flatMap((option) =>
                   option.type == ApplicationCommandOptionType.Subcommand
                       ? (option.options ?? [])
                       : [option],
               )
-              .find((option) => option.name == name)
-        : undefined;
+              .find((option) => option.name == name) ?? null)
+        : null;
 }
 
 export function getSubcommand(interaction: APIApplicationCommandInteraction) {
     return interaction.data.type == ApplicationCommandType.ChatInput
-        ? interaction.data.options?.find(
+        ? (interaction.data.options?.find(
               (option) =>
                   option.type == ApplicationCommandOptionType.Subcommand,
-          )?.name
-        : undefined;
+          )?.name ?? null)
+        : null;
 }
 
 export function getUserOption(
@@ -89,7 +92,7 @@ export function getUserOption(
     const option = findOption(interaction, name);
     return option?.type == ApplicationCommandOptionType.User
         ? option.value
-        : undefined;
+        : null;
 }
 
 export function getIntegerOption(
@@ -99,7 +102,7 @@ export function getIntegerOption(
     const option = findOption(interaction, name);
     return option?.type == ApplicationCommandOptionType.Integer
         ? option.value
-        : undefined;
+        : null;
 }
 
 export function getStringOption(
@@ -109,7 +112,7 @@ export function getStringOption(
     const option = findOption(interaction, name);
     return option?.type == ApplicationCommandOptionType.String
         ? option.value
-        : undefined;
+        : null;
 }
 
 export function getBooleanOption(
@@ -119,21 +122,24 @@ export function getBooleanOption(
     const option = findOption(interaction, name);
     return option?.type == ApplicationCommandOptionType.Boolean
         ? option.value
-        : undefined;
+        : null;
 }
 
 export function getFocusedString(
     interaction: APIApplicationCommandAutocompleteInteraction,
 ) {
-    return interaction.data.options
-        ?.flatMap((option) =>
-            option.type == ApplicationCommandOptionType.Subcommand
-                ? (option.options ?? [])
-                : [option],
-        )
-        .flatMap((option) =>
-            option.type == ApplicationCommandOptionType.String && option.focused
-                ? [option.value]
-                : [],
-        )[0];
+    return (
+        interaction.data.options
+            ?.flatMap((option) =>
+                option.type == ApplicationCommandOptionType.Subcommand
+                    ? (option.options ?? [])
+                    : [option],
+            )
+            .flatMap((option) =>
+                option.type == ApplicationCommandOptionType.String &&
+                option.focused
+                    ? [option.value]
+                    : [],
+            )[0] ?? null
+    );
 }

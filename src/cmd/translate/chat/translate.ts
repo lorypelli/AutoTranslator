@@ -7,27 +7,34 @@ import {
     followUp,
     getChatMessages,
     getMessageId,
+    getPreferredLanguage,
+    getReadableChannelId,
     MAX_MESSAGES,
     toEmbed,
     translateFirstConversation,
     translateLatestConversation,
     translateMessages,
 } from '../../../utils/index.js';
-import { CONTEXT_MESSAGES, MIN_MESSAGES } from './constants.js';
+import {
+    CONTEXT_MESSAGES,
+    DEFAULT_LANGUAGE,
+    MIN_MESSAGES,
+} from './constants.js';
 
 type TranslateOptions = {
     userId: string;
     customMessage: string;
-    language: string;
+    language: string | null;
     messages: number;
-    from?: string;
-    to?: string;
+    from: string | null;
+    to: string | null;
 };
 
 function translateContents(
     env: Bindings,
     contents: string[],
-    { language, messages, from, to }: TranslateOptions,
+    language: string,
+    { messages, from, to }: TranslateOptions,
 ) {
     if (from && to) {
         return translateMessages(env, contents, language);
@@ -56,9 +63,14 @@ async function sendTranslations(
     if (!recent.length) {
         throw new Error('There are no messages to translate.');
     }
+    const language =
+        options.language ||
+        (await getPreferredLanguage(env, userId)) ||
+        DEFAULT_LANGUAGE;
     const translations = await translateContents(
         env,
         recent.map((message) => message.content),
+        language,
         options,
     );
     const translated = from
@@ -87,12 +99,12 @@ export function translate(
     { env, defer }: Runtime,
     options: TranslateOptions,
 ) {
-    const channelId = interaction.channel?.id;
+    const channelId = getReadableChannelId(interaction);
     const { messages } = options;
     const from = options.from && getMessageId(options.from);
     const to = options.to && getMessageId(options.to);
     if (!channelId) {
-        return error('This can only be used in a channel.');
+        return error('This can only be used in servers and DMs the bot is in.');
     }
     if (
         messages != CONTEXT_MESSAGES &&
