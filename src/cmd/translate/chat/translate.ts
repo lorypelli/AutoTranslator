@@ -15,10 +15,10 @@ import {
     parseMessageRange,
     toEmbed,
 } from '../../../discord/index.js';
-import { getPreferredLanguage } from '../../../storage/index.js';
 import type { Bindings, Runtime } from '../../../types/index.js';
 import {
     INVALID_RANGE_ERROR,
+    resolveLanguage,
     UNREADABLE_CHANNEL_ERROR,
 } from '../../shared/index.js';
 import {
@@ -93,10 +93,12 @@ async function sendTranslations(
     if (!messages.length) {
         throw new Error('There are no messages to translate.');
     }
-    const language =
-        options.language ||
-        (await getPreferredLanguage(env, userId)) ||
-        DEFAULT_LANGUAGE;
+    const language = await resolveLanguage(
+        env,
+        options.language,
+        userId,
+        DEFAULT_LANGUAGE,
+    );
     const embeds = await withTimeout(
         translateToEmbeds(env, messages, language, options),
     );

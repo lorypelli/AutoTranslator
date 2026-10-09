@@ -25,7 +25,7 @@ function findModalComponent(
     return label?.component ?? null;
 }
 
-export function getModalValue(
+export function getModalText(
     interaction: APIModalSubmitInteraction,
     customId: string,
 ) {

@@ -17,9 +17,9 @@ import {
     sendEmbeds,
     toEmbed,
 } from '../../../discord/index.js';
-import { getPreferredLanguage } from '../../../storage/index.js';
 import type { Bindings, Runtime } from '../../../types/index.js';
 import { orNull } from '../../../utils/index.js';
+import { resolveLanguage } from '../../shared/index.js';
 import { NO_TEXT_ERROR } from './constants.js';
 
 type TranslateInteraction =
@@ -62,17 +62,19 @@ async function sendTranslation(
     options: TranslateMessageOptions,
     message?: APIMessage,
 ) {
-    const language =
-        options.language ||
-        (await getPreferredLanguage(env, getUserId(interaction))) ||
-        interaction.locale;
+    const language = await resolveLanguage(
+        env,
+        options.language,
+        getUserId(interaction),
+        interaction.locale,
+    );
     const embed = await withTimeout(
         translateToEmbed(env, text, language, message),
     );
     await sendEmbeds(interaction, [embed], options.ephemeral);
 }
 
-async function sendMessageTranslation(
+async function sendTranslationFromId(
     interaction: TranslateInteraction,
     env: Bindings,
     channelId: string,
@@ -108,6 +110,6 @@ export function translateFromId(
         );
     }
     return defer(
-        sendMessageTranslation(interaction, env, channelId, messageId, options),
+        sendTranslationFromId(interaction, env, channelId, messageId, options),
     );
 }

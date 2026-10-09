@@ -1,4 +1,4 @@
-import { getModalValue } from '../../../discord/index.js';
+import { getModalText } from '../../../discord/index.js';
 import type { Modal } from '../../../types/index.js';
 import { DEFAULT_MESSAGES, INTEGER_REGEX, MODAL_ID } from './constants.js';
 import { translate } from './translate.js';
@@ -18,11 +18,11 @@ export const TRANSLATE_CHAT_MODAL: Modal = {
     run(interaction, runtime, userId) {
         return translate(interaction, runtime, {
             userId,
-            customMessage: getModalValue(interaction, 'custom-message') || '',
-            language: getModalValue(interaction, 'language'),
-            count: parseCount(getModalValue(interaction, 'messages')),
-            from: getModalValue(interaction, 'from'),
-            to: getModalValue(interaction, 'to'),
+            customMessage: getModalText(interaction, 'custom-message') || '',
+            language: getModalText(interaction, 'language'),
+            count: parseCount(getModalText(interaction, 'messages')),
+            from: getModalText(interaction, 'from'),
+            to: getModalText(interaction, 'to'),
         });
     },
 };

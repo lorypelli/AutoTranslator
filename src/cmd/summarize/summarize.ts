@@ -17,10 +17,10 @@ import {
     sendEmbeds,
     toEmbed,
 } from '../../discord/index.js';
-import { getPreferredLanguage } from '../../storage/index.js';
 import type { Bindings, Runtime } from '../../types/index.js';
 import {
     INVALID_RANGE_ERROR,
+    resolveLanguage,
     UNREADABLE_CHANNEL_ERROR,
 } from '../shared/index.js';
 
@@ -74,10 +74,12 @@ async function sendSummary(
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
-    const language =
-        options.language ||
-        (await getPreferredLanguage(env, getUserId(interaction))) ||
-        interaction.locale;
+    const language = await resolveLanguage(
+        env,
+        options.language,
+        getUserId(interaction),
+        interaction.locale,
+    );
     const embed = await withTimeout(
         summarizeToEmbed(env, messages, language, options),
     );
