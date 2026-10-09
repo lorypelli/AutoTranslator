@@ -26,5 +26,5 @@ export function getReadableChannelId(interaction: APIInteraction) {
     if (!owners[ApplicationIntegrationType.GuildInstall]) {
         return null;
     }
-    return interaction.channel?.id ?? null;
+    return interaction.channel?.id || null;
 }

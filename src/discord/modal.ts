@@ -22,7 +22,7 @@ function findModalComponent(
         (row) => row.type == ComponentType.Label,
     );
     const label = labels.find((item) => item.component.custom_id == customId);
-    return label?.component ?? null;
+    return label?.component || null;
 }
 
 export function getModalText(

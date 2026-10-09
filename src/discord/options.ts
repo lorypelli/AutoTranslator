@@ -12,13 +12,13 @@ function findOption(
     if (interaction.data.type != ApplicationCommandType.ChatInput) {
         return null;
     }
-    const options = interaction.data.options ?? [];
+    const options = interaction.data.options || [];
     const flattened = options.flatMap((option) =>
         option.type == ApplicationCommandOptionType.Subcommand
-            ? (option.options ?? [])
+            ? option.options || []
             : [option],
     );
-    return flattened.find((option) => option.name == name) ?? null;
+    return flattened.find((option) => option.name == name) || null;
 }
 
 export function getSubcommand(interaction: APIApplicationCommandInteraction) {
@@ -28,7 +28,7 @@ export function getSubcommand(interaction: APIApplicationCommandInteraction) {
     const subcommand = interaction.data.options?.find(
         (option) => option.type == ApplicationCommandOptionType.Subcommand,
     );
-    return subcommand?.name ?? null;
+    return subcommand?.name || null;
 }
 
 export function getStringOption(
@@ -74,14 +74,14 @@ export function getUserOption(
 export function getFocusedString(
     interaction: APIApplicationCommandAutocompleteInteraction,
 ) {
-    const options = interaction.data.options ?? [];
+    const options = interaction.data.options || [];
     const strings = options
         .flatMap((option) =>
             option.type == ApplicationCommandOptionType.Subcommand
-                ? (option.options ?? [])
+                ? option.options || []
                 : [option],
         )
         .filter((option) => option.type == ApplicationCommandOptionType.String);
     const focused = strings.find((option) => option.focused);
-    return focused?.value ?? null;
+    return focused?.value || null;
 }

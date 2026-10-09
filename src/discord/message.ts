@@ -13,7 +13,7 @@ type MessageRange = {
 
 export function parseMessageId(text: string) {
     const match = URL.parse(text)?.pathname.match(MESSAGE_PATH_REGEX);
-    const id = match?.groups?.id ?? text;
+    const id = match?.groups?.id || text;
     return SNOWFLAKE_REGEX.test(id) ? id : null;
 }
 

@@ -10,11 +10,11 @@ const SNOWFLAKE_TIMESTAMP_SHIFT = 22n;
 const DEFAULT_AVATARS = 6n;
 
 export function getUserId(interaction: APIInteraction) {
-    return interaction.member?.user.id ?? interaction.user?.id ?? null;
+    return interaction.member?.user.id || interaction.user?.id || null;
 }
 
 export function getDisplayName(user: APIUser) {
-    return user.global_name ?? user.username;
+    return user.global_name || user.username;
 }
 
 export function getAvatarUrl(user: APIUser) {
