@@ -5,25 +5,20 @@ import {
     ApplicationCommandType,
 } from 'discord-api-types/v10';
 
-function getOptions(interaction: APIApplicationCommandInteraction) {
-    if (interaction.data.type != ApplicationCommandType.ChatInput) {
-        return [];
-    }
-    const options = interaction.data.options ?? [];
-    return options.flatMap((option) =>
-        option.type == ApplicationCommandOptionType.Subcommand
-            ? (option.options ?? [])
-            : [option],
-    );
-}
-
 function findOption(
     interaction: APIApplicationCommandInteraction,
     name: string,
 ) {
-    return (
-        getOptions(interaction).find((option) => option.name == name) ?? null
+    if (interaction.data.type != ApplicationCommandType.ChatInput) {
+        return null;
+    }
+    const options = interaction.data.options ?? [];
+    const flattened = options.flatMap((option) =>
+        option.type == ApplicationCommandOptionType.Subcommand
+            ? (option.options ?? [])
+            : [option],
     );
+    return flattened.find((option) => option.name == name) ?? null;
 }
 
 export function getSubcommand(interaction: APIApplicationCommandInteraction) {

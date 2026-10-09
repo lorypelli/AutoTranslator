@@ -19,13 +19,13 @@ export async function getMessage(
 export async function getMessages(
     env: Bindings,
     channelId: string,
-    query: Record<string, string>,
+    query: URLSearchParams,
 ) {
     const res = await botRequest(
         env,
-        `${Routes.channelMessages(channelId)}?${new URLSearchParams(query)}`,
+        `${Routes.channelMessages(channelId)}?${query}`,
         'Could not fetch the messages.',
     );
     const messages: APIMessage[] = await res.json();
-    return messages.reverse();
+    return messages;
 }

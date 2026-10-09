@@ -17,6 +17,6 @@ export const TRANSLATE_COMMAND: Command = {
     },
     autocomplete: autocompleteLanguage,
     run(interaction, runtime) {
-        return runSubcommand(SUBCOMMANDS, interaction, runtime);
+        return runSubcommand(interaction, runtime, SUBCOMMANDS);
     },
 };

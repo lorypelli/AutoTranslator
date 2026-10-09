@@ -24,6 +24,6 @@ export function botRequest(
 ) {
     return request(route, errorMessage, {
         ...init,
-        headers: { Authorization: `Bot ${env.BOT_TOKEN}` },
+        headers: { Authorization: `Bot ${env.BOT_TOKEN}`, ...init?.headers },
     });
 }

@@ -18,25 +18,24 @@ export function parseMessageId(text: string) {
 }
 
 export function parseMessageRange(from: string | null, to: string | null) {
-    const fromId = from && parseMessageId(from);
-    const toId = to && parseMessageId(to);
+    const fromId = from ? parseMessageId(from) : null;
+    const toId = to ? parseMessageId(to) : null;
     if ((from && !fromId) || (to && !toId)) {
         return null;
     }
     return { from: fromId, to: toId };
 }
 
-function getQuery(
-    { from, to }: MessageRange,
-    limit: number,
-): Record<string, string> {
+function getQuery({ from, to }: MessageRange, limit: number) {
     if (from) {
-        return { after: `${BigInt(from) - 1n}`, limit: `${MAX_MESSAGES}` };
+        const after = `${BigInt(from) - 1n}`;
+        return new URLSearchParams({ after, limit: `${MAX_MESSAGES}` });
     }
     if (to) {
-        return { before: `${BigInt(to) + 1n}`, limit: `${MAX_MESSAGES}` };
+        const before = `${BigInt(to) + 1n}`;
+        return new URLSearchParams({ before, limit: `${MAX_MESSAGES}` });
     }
-    return { limit: `${limit}` };
+    return new URLSearchParams({ limit: `${limit}` });
 }
 
 export async function getChatMessages(
@@ -45,7 +44,9 @@ export async function getChatMessages(
     range: MessageRange,
     limit = MAX_MESSAGES,
 ) {
-    const messages = await getMessages(env, channelId, getQuery(range, limit));
+    const query = getQuery(range, limit);
+    const newestFirst = await getMessages(env, channelId, query);
+    const messages = newestFirst.toReversed();
     return messages.filter(
         (message) =>
             !message.author.bot &&
