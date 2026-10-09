@@ -11,7 +11,7 @@ import type { Runtime } from '../types/index.js';
 import { COMMANDS, MODALS } from './commands.js';
 
 function findCommand(name: string) {
-    return COMMANDS.find((command) => command.data.name == name) ?? null;
+    return COMMANDS.find((command) => command.data.name == name) || null;
 }
 
 function runCommand(

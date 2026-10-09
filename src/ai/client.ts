@@ -20,7 +20,7 @@ export async function ask(
     });
     const completion = await orNullWithin(request, ATTEMPT_TIMEOUT_MS);
     if (completion) {
-        const [choice] = completion.choices ?? [];
+        const [choice] = completion.choices || [];
         return parseJsonObject(choice?.message?.content || '');
     }
     if (retry) {
