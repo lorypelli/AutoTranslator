@@ -8,10 +8,14 @@ export const authBot = createMiddleware<Env>(async (ctx, next) => {
     const body = await ctx.req.text();
     const { applicationId, botToken } = await parseJsonObject(body);
     if (!applicationId || !botToken) {
-        throw new HTTPException(401);
+        throw new HTTPException(401, {
+            message: 'The application ID and bot token are required.',
+        });
     }
     if (applicationId != APPLICATION_ID || botToken != BOT_TOKEN) {
-        throw new HTTPException(403);
+        throw new HTTPException(403, {
+            message: 'The application ID or bot token is wrong.',
+        });
     }
     await next();
 });

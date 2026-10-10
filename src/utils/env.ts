@@ -25,5 +25,7 @@ export function getBindings(ctx: Context) {
             BOT_TOKEN: raw.DEV_BOT_TOKEN,
         };
     }
-    throw new HTTPException(400);
+    throw new HTTPException(400, {
+        message: 'This host is not configured.',
+    });
 }

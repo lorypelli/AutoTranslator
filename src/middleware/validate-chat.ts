@@ -11,7 +11,10 @@ export const validateChat = createMiddleware<ChatEnv>(async (ctx, next) => {
         !isStringArray(messages) ||
         !messages.length
     ) {
-        throw new HTTPException(400);
+        throw new HTTPException(400, {
+            message:
+                'A language and a non-empty list of messages are required.',
+        });
     }
     ctx.set('language', language);
     ctx.set('messages', messages);
