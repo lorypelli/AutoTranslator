@@ -12,7 +12,8 @@
         "command": "tsdown"
     },
     "dev": {
-        "port": 56789
+        "port": 56789,
+        "host": "56789.lorypelli.dev"
     },
     "ai": {
         "binding": "AI"
