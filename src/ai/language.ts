@@ -5,6 +5,7 @@ import { INVALID_LANGUAGE_ERROR, INVALID_RESPONSE_ERROR } from './errors.js';
 import {
     DETECT_LANGUAGE_PROMPT,
     LANGUAGE_NAME_PROMPT,
+    RANDOM_LANGUAGES_PROMPT,
     SUGGEST_LANGUAGES_PROMPT,
 } from './prompts.js';
 
@@ -25,6 +26,14 @@ export async function getLanguageSuggestions(env: Bindings, input: string) {
     const { languages } = await ask(env, SUGGEST_LANGUAGES_PROMPT, {
         language: input,
     });
+    if (!isStringArray(languages)) {
+        throw new Error(INVALID_RESPONSE_ERROR);
+    }
+    return languages;
+}
+
+export async function getRandomLanguages(env: Bindings) {
+    const { languages } = await ask(env, RANDOM_LANGUAGES_PROMPT, {});
     if (!isStringArray(languages)) {
         throw new Error(INVALID_RESPONSE_ERROR);
     }
