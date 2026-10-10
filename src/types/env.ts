@@ -10,6 +10,19 @@ export type Bindings = {
     LANGUAGES: Kv;
 };
 
+export type RawBindings = {
+    PROD_HOSTNAME: string;
+    PROD_PUBLIC_KEY: string;
+    PROD_APPLICATION_ID: string;
+    PROD_BOT_TOKEN: string;
+    DEV_HOSTNAME: string;
+    DEV_PUBLIC_KEY: string;
+    DEV_APPLICATION_ID: string;
+    DEV_BOT_TOKEN: string;
+    AI: Ai;
+    LANGUAGES: Kv;
+};
+
 export type DiscordEnv = {
     Variables: {
         interaction: APIInteraction;

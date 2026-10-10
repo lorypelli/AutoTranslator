@@ -1,14 +1,14 @@
 import verifyKey from '@discord-interactions/verify';
 import type { APIInteraction } from 'discord-api-types/v10';
-import { env } from 'hono/adapter';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import type { Bindings, DiscordEnv } from '../types/index.js';
+import type { DiscordEnv } from '../types/index.js';
+import { getBindings } from '../utils/index.js';
 
 export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {
     const signature = ctx.req.header('X-Signature-Ed25519');
     const timestamp = ctx.req.header('X-Signature-Timestamp');
-    const { PUBLIC_KEY } = env<Bindings>(ctx);
+    const { PUBLIC_KEY } = getBindings(ctx);
     if (!signature || !timestamp || !PUBLIC_KEY) {
         throw new HTTPException(401);
     }
