@@ -4,6 +4,7 @@ import {
     MessageFlags,
     type RESTPostAPIInteractionFollowupJSONBody,
 } from 'discord-api-types/v10';
+import { UNKNOWN_ERROR } from '../utils/index.js';
 import { deleteOriginal, editOriginal, followUp } from './webhook.js';
 
 function followUpError(interaction: APIInteraction, content: string) {
@@ -16,7 +17,8 @@ export function followUpOnError(
 ) {
     return work.then(
         () => null,
-        (err: Error) => followUpError(interaction, err.message),
+        (err: Error) =>
+            followUpError(interaction, err.message || UNKNOWN_ERROR),
     );
 }
 
