@@ -3,4 +3,4 @@ export const HELP_TEXT = `**/translate message** translates a message or text in
 **/summarize** summarizes the latest conversation or a range of messages
 **/language set** and **/language reset** manage your preferred language
 **/invite** gives the link to add the bot
-Right click a message and choose **Translate** or **Translate Chat** under Apps`;
+Right click a message, then **Apps** → **Translate Message**, or right click a user, then **Apps** → **Translate Chat**`;

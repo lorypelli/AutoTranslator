@@ -28,7 +28,7 @@ export const TRANSLATE_MESSAGE_CONTEXT_MENU: Command = {
     data: {
         ...ANYWHERE,
         type: ApplicationCommandType.Message,
-        name: 'Translate',
+        name: 'Translate Message',
     },
     run(interaction) {
         if (interaction.data.type != ApplicationCommandType.Message) {
@@ -41,6 +41,6 @@ export const TRANSLATE_MESSAGE_CONTEXT_MENU: Command = {
         }
         const customId = toCustomId(MODAL_ID, interaction.data.target_id);
         const inputs = getModalInputs(interaction, message.content);
-        return showModal(customId, 'Translate', inputs);
+        return showModal(customId, 'Translate Message', inputs);
     },
 };

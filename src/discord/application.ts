@@ -22,14 +22,19 @@ export async function registerCommands(
     );
 }
 
-export async function getOwnerId(env: Bindings) {
+export async function getApplication(env: Bindings) {
     const res = await botRequest(
         env,
         Routes.currentApplication(),
         'Could not fetch the application.',
     );
     const application: APIApplication = await res.json();
-    return application.team?.owner_user_id || null;
+    return application;
+}
+
+export async function getOwnerId(env: Bindings) {
+    const { team } = await getApplication(env);
+    return team?.owner_user_id || null;
 }
 
 export function getInviteUrl({ APPLICATION_ID }: Bindings) {

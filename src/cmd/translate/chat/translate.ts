@@ -76,10 +76,9 @@ async function translateToEmbeds(
         selected.map(({ content }) => content),
         language,
     );
-    return translations.map((translation, i) => {
-        const { author, timestamp } = selected[i];
-        return toEmbed(translation, author, timestamp);
-    });
+    return selected.map(({ author, timestamp }, i) =>
+        toEmbed(translations.at(i) || '', author, timestamp),
+    );
 }
 
 async function sendTranslations(
