@@ -5,27 +5,24 @@ import {
 import {
     ANYWHERE,
     getApplication,
+    getCommands,
     getUser,
     sendEmbeds,
     toEmbed,
 } from '../../discord/index.js';
 import type { Bindings, Command } from '../../types/index.js';
-import { HELP_TEXT } from './constants.js';
-
-function getFooterText(servers: number, users: number) {
-    return `Added to ${servers} ${servers == 1 ? 'server' : 'servers'} and installed by ${users} ${users == 1 ? 'user' : 'users'}`;
-}
+import { getFooterText, getHelpText } from './text.js';
 
 async function sendHelp(interaction: APIInteraction, env: Bindings) {
-    const {
-        approximate_guild_count: servers = 0,
-        approximate_user_install_count: users = 0,
-    } = await getApplication(env);
+    const [application, commands] = await Promise.all([
+        getApplication(env),
+        getCommands(env),
+    ]);
     await sendEmbeds(interaction, [
         {
-            ...toEmbed(HELP_TEXT, getUser(interaction)),
+            ...toEmbed(getHelpText(commands), getUser(interaction)),
             footer: {
-                text: getFooterText(servers, users),
+                text: getFooterText(application),
             },
         },
     ]);

@@ -1,5 +1,6 @@
 import {
     type APIApplication,
+    type APIApplicationCommand,
     OAuth2Routes,
     type RESTPutAPIApplicationCommandsJSONBody,
     Routes,
@@ -20,6 +21,16 @@ export async function registerCommands(
             body: JSON.stringify(commands),
         },
     );
+}
+
+export async function getCommands(env: Bindings) {
+    const res = await botRequest(
+        env,
+        Routes.applicationCommands(env.APPLICATION_ID),
+        'Could not fetch the commands.',
+    );
+    const commands: APIApplicationCommand[] = await res.json();
+    return commands;
 }
 
 export async function getApplication(env: Bindings) {
