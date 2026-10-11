@@ -18,8 +18,14 @@ export async function ask(
             enable_thinking: false,
         },
         messages: [
-            { role: 'system', content: prompt },
-            { role: 'user', content: JSON.stringify(input) },
+            {
+                role: 'system',
+                content: prompt,
+            },
+            {
+                role: 'user',
+                content: JSON.stringify(input),
+            },
         ],
     });
     const completion = await orNullWithin(request, ATTEMPT_TIMEOUT_MS);

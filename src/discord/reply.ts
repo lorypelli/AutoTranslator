@@ -8,7 +8,10 @@ import { UNKNOWN_ERROR } from '../utils/index.js';
 import { deleteOriginal, editOriginal, followUp } from './webhook.js';
 
 function followUpError(interaction: APIInteraction, content: string) {
-    return followUp(interaction, { content, flags: MessageFlags.Ephemeral });
+    return followUp(interaction, {
+        content,
+        flags: MessageFlags.Ephemeral,
+    });
 }
 
 export function followUpOnError(
@@ -36,7 +39,13 @@ export async function sendEmbeds(
     ephemeral = true,
 ) {
     if (ephemeral) {
-        return editOriginal(interaction, { embeds });
+        return editOriginal(interaction, {
+            embeds,
+        });
     }
-    return followUpPublicly(interaction, [{ embeds }]);
+    return followUpPublicly(interaction, [
+        {
+            embeds,
+        },
+    ]);
 }

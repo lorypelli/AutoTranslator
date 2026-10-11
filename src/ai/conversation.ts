@@ -14,7 +14,10 @@ async function findBoundary(
     messages: APIMessage[],
 ) {
     const reply = await ask(env, prompt, {
-        messages: messages.map(({ content }, id) => ({ id, content })),
+        messages: messages.map(({ content }, id) => ({
+            id,
+            content,
+        })),
     });
     const index = reply[key];
     if (

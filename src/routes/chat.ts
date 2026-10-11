@@ -12,5 +12,8 @@ chat.post('/', authBot, validateChat, async (ctx) => {
     const translations = await withTimeout(
         translateMessages(getBindings(ctx), messages, language),
     );
-    return ctx.json({ success: true, translations });
+    return ctx.json({
+        success: true,
+        translations,
+    });
 });

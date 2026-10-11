@@ -36,7 +36,9 @@ export async function translateMessages(
         throw new Error(INVALID_LANGUAGE_ERROR);
     }
     const chunks = Array.from(
-        { length: Math.ceil(messages.length / CHUNK_SIZE) },
+        {
+            length: Math.ceil(messages.length / CHUNK_SIZE),
+        },
         (_, i) => messages.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
     );
     const translatedChunks = await Promise.all(

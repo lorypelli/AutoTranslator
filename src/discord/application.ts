@@ -15,7 +15,10 @@ export async function registerCommands(
         env,
         Routes.applicationCommands(env.APPLICATION_ID),
         'Could not register the commands.',
-        { method: 'PUT', body: JSON.stringify(commands) },
+        {
+            method: 'PUT',
+            body: JSON.stringify(commands),
+        },
     );
 }
 

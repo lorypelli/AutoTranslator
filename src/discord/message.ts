@@ -32,13 +32,21 @@ export function parseMessageRange(from: string | null, to: string | null) {
 function getQuery({ from, to }: MessageRange, limit: number) {
     if (from) {
         const after = `${BigInt(from) - 1n}`;
-        return new URLSearchParams({ after, limit: `${MAX_MESSAGES}` });
+        return new URLSearchParams({
+            after,
+            limit: `${MAX_MESSAGES}`,
+        });
     }
     if (to) {
         const before = `${BigInt(to) + 1n}`;
-        return new URLSearchParams({ before, limit: `${MAX_MESSAGES}` });
+        return new URLSearchParams({
+            before,
+            limit: `${MAX_MESSAGES}`,
+        });
     }
-    return new URLSearchParams({ limit: `${limit}` });
+    return new URLSearchParams({
+        limit: `${limit}`,
+    });
 }
 
 export async function getChatMessages(

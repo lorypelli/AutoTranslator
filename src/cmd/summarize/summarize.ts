@@ -75,7 +75,10 @@ async function sendSummary(
     options: SummarizeOptions,
 ) {
     const { ephemeral, from, to } = options;
-    const messages = await getChatMessages(env, channelId, { from, to });
+    const messages = await getChatMessages(env, channelId, {
+        from,
+        to,
+    });
     if (!messages.length) {
         throw new Error('There are no messages to summarize.');
     }
@@ -111,6 +114,9 @@ export function summarize(
         return error(INVALID_RANGE_ERROR);
     }
     return defer(
-        sendSummary(interaction, env, channelId, { ...options, ...range }),
+        sendSummary(interaction, env, channelId, {
+            ...options,
+            ...range,
+        }),
     );
 }

@@ -13,7 +13,10 @@ export async function followUp(
     await request(
         Routes.webhook(applicationId, token),
         'Could not send the reply.',
-        { method: 'POST', body: JSON.stringify(body) },
+        {
+            method: 'POST',
+            body: JSON.stringify(body),
+        },
     );
 }
 
@@ -24,7 +27,10 @@ export async function editOriginal(
     await request(
         Routes.webhookMessage(applicationId, token),
         'Could not edit the reply.',
-        { method: 'PATCH', body: JSON.stringify(body) },
+        {
+            method: 'PATCH',
+            body: JSON.stringify(body),
+        },
     );
 }
 
@@ -35,6 +41,8 @@ export async function deleteOriginal({
     await request(
         Routes.webhookMessage(applicationId, token),
         'Could not delete the reply.',
-        { method: 'DELETE' },
+        {
+            method: 'DELETE',
+        },
     );
 }

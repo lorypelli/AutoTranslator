@@ -11,5 +11,7 @@ register.post('/', authBot, async (ctx) => {
         getBindings(ctx),
         COMMANDS.map((command) => command.data),
     );
-    return ctx.json({ success: true });
+    return ctx.json({
+        success: true,
+    });
 });

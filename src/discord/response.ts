@@ -47,7 +47,10 @@ export function autocompleteChoices(
     return {
         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
         data: {
-            choices: names.map((name) => ({ name, value: name })),
+            choices: names.map((name) => ({
+                name,
+                value: name,
+            })),
         },
     };
 }

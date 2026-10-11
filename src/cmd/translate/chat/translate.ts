@@ -90,7 +90,15 @@ async function sendTranslations(
 ) {
     const { userId, customMessage, count, from, to } = options;
     const limit = count == CONTEXT_MESSAGES ? MAX_MESSAGES : count;
-    const messages = await getChatMessages(env, channelId, { from, to }, limit);
+    const messages = await getChatMessages(
+        env,
+        channelId,
+        {
+            from,
+            to,
+        },
+        limit,
+    );
     if (!messages.length) {
         throw new Error('There are no messages to translate.');
     }
@@ -132,6 +140,9 @@ export function translate(
         return error(INVALID_RANGE_ERROR);
     }
     return defer(
-        sendTranslations(interaction, env, channelId, { ...options, ...range }),
+        sendTranslations(interaction, env, channelId, {
+            ...options,
+            ...range,
+        }),
     );
 }

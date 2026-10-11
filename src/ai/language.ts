@@ -41,7 +41,9 @@ export async function getRandomLanguages(env: Bindings) {
 }
 
 export async function detectLanguage(env: Bindings, text: string) {
-    const { language } = await ask(env, DETECT_LANGUAGE_PROMPT, { text });
+    const { language } = await ask(env, DETECT_LANGUAGE_PROMPT, {
+        text,
+    });
     if (typeof language != 'string' || !language.trim()) {
         throw new Error(INVALID_RESPONSE_ERROR);
     }

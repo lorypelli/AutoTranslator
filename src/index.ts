@@ -8,12 +8,19 @@ const app = new Hono();
 app.onError((err, ctx) => {
     const status = err instanceof HTTPException ? err.status : 500;
     return ctx.json(
-        { success: false, error: err.message || UNKNOWN_ERROR },
+        {
+            success: false,
+            error: err.message || UNKNOWN_ERROR,
+        },
         status,
     );
 });
 
-app.get('/', (ctx) => ctx.json({ success: true }));
+app.get('/', (ctx) =>
+    ctx.json({
+        success: true,
+    }),
+);
 
 app.route('/', interactions);
 app.route('/chat', chat);
