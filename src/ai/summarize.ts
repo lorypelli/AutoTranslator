@@ -11,9 +11,9 @@ export async function summarizeMessages(
     language: string,
 ) {
     const { summary } = await ask(env, summaryPrompt(language), {
-        messages: messages.map((message) => ({
-            author: getDisplayName(message.author),
-            content: message.content,
+        messages: messages.map(({ author, content }) => ({
+            author: getDisplayName(author),
+            content,
         })),
     });
     if (typeof summary != 'string' || !summary.trim()) {

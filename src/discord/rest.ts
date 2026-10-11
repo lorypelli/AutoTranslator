@@ -8,7 +8,10 @@ export async function request(
 ) {
     const res = await fetch(`${RouteBases.api}${route}`, {
         ...init,
-        headers: { 'Content-Type': 'application/json', ...init?.headers },
+        headers: {
+            'Content-Type': 'application/json',
+            ...init?.headers,
+        },
     });
     if (!res.ok) {
         throw new Error(errorMessage);
@@ -17,13 +20,16 @@ export async function request(
 }
 
 export function botRequest(
-    env: Bindings,
+    { BOT_TOKEN }: Bindings,
     route: string,
     errorMessage: string,
     init?: RequestInit,
 ) {
     return request(route, errorMessage, {
         ...init,
-        headers: { Authorization: `Bot ${env.BOT_TOKEN}`, ...init?.headers },
+        headers: {
+            Authorization: `Bot ${BOT_TOKEN}`,
+            ...init?.headers,
+        },
     });
 }

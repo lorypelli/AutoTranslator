@@ -1,4 +1,4 @@
-import type { APIEmbed, APIMessage } from 'discord-api-types/v10';
+import type { APIEmbed, APIUser } from 'discord-api-types/v10';
 import { getAvatarUrl, getDisplayName } from './user.js';
 
 const MAX_DESCRIPTION_LENGTH = 4096;
@@ -6,15 +6,21 @@ const MAX_EMBEDS = 10;
 const MAX_EMBEDS_LENGTH = 6000;
 const EMBED_COLOR = 0x6845d8;
 
-export function toEmbed(description: string, message?: APIMessage) {
+export function toEmbed(
+    description: string,
+    user: APIUser | null,
+    timestamp = new Date().toISOString(),
+) {
     return {
         color: EMBED_COLOR,
-        author: message && {
-            name: getDisplayName(message.author),
-            icon_url: getAvatarUrl(message.author),
-        },
+        author: user
+            ? {
+                  name: getDisplayName(user),
+                  icon_url: getAvatarUrl(user),
+              }
+            : undefined,
         description: description.slice(0, MAX_DESCRIPTION_LENGTH) || undefined,
-        timestamp: message?.timestamp,
+        timestamp,
     };
 }
 

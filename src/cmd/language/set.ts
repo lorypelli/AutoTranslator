@@ -6,6 +6,7 @@ import { getLanguageName, withTimeout } from '../../ai/index.js';
 import {
     error,
     getStringOption,
+    getUser,
     getUserId,
     sendEmbeds,
     toEmbed,
@@ -24,7 +25,10 @@ async function setLanguage(
     const name = await withTimeout(getLanguageName(env, language));
     await setPreferredLanguage(env, userId, name);
     await sendEmbeds(interaction, [
-        toEmbed(`Your preferred language is now ${name}.`),
+        toEmbed(
+            `Your preferred language is now ${name}.`,
+            getUser(interaction),
+        ),
     ]);
 }
 

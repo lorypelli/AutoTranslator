@@ -2,6 +2,7 @@ import type {
     APIApplicationCommandInteraction,
     APIMessage,
     APIModalSubmitInteraction,
+    APIUser,
 } from 'discord-api-types/v10';
 import {
     detectLanguage,
@@ -13,6 +14,7 @@ import {
     error,
     getMessage,
     getReadableChannelId,
+    getUser,
     getUserId,
     sendEmbeds,
     toEmbed,
@@ -42,7 +44,8 @@ async function translateToEmbed(
     env: Bindings,
     text: string,
     language: string,
-    message?: APIMessage,
+    user: APIUser | null,
+    timestamp?: string,
 ) {
     const [translation, target, source] = await Promise.all([
         translateText(env, text, language),
@@ -50,8 +53,10 @@ async function translateToEmbed(
         orNull(detectLanguage(env, text)),
     ]);
     return {
-        ...toEmbed(translation, message),
-        footer: { text: getFooterText(target, source) },
+        ...toEmbed(translation, user, timestamp),
+        footer: {
+            text: getFooterText(target, source),
+        },
     };
 }
 
@@ -69,7 +74,13 @@ async function sendTranslation(
         interaction.locale,
     );
     const embed = await withTimeout(
-        translateToEmbed(env, text, language, message),
+        translateToEmbed(
+            env,
+            text,
+            language,
+            message?.author || getUser(interaction),
+            message?.timestamp,
+        ),
     );
     await sendEmbeds(interaction, [embed], options.ephemeral);
 }

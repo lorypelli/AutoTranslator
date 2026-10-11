@@ -2,7 +2,13 @@ import {
     type APIInteraction,
     ApplicationCommandOptionType,
 } from 'discord-api-types/v10';
-import { error, getUserId, sendEmbeds, toEmbed } from '../../discord/index.js';
+import {
+    error,
+    getUser,
+    getUserId,
+    sendEmbeds,
+    toEmbed,
+} from '../../discord/index.js';
 import { deletePreferredLanguage } from '../../storage/index.js';
 import type { Bindings, Subcommand } from '../../types/index.js';
 import { UNKNOWN_USER_ERROR } from './constants.js';
@@ -14,7 +20,7 @@ async function resetLanguage(
 ) {
     await deletePreferredLanguage(env, userId);
     await sendEmbeds(interaction, [
-        toEmbed('Your preferred language was removed.'),
+        toEmbed('Your preferred language was removed.', getUser(interaction)),
     ]);
 }
 

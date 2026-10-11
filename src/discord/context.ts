@@ -21,10 +21,12 @@ export const WITH_BOT = {
     contexts: [InteractionContextType.Guild, InteractionContextType.BotDM],
 };
 
-export function getReadableChannelId(interaction: APIInteraction) {
-    const owners = interaction.authorizing_integration_owners;
+export function getReadableChannelId({
+    authorizing_integration_owners: owners,
+    channel,
+}: APIInteraction) {
     if (!owners[ApplicationIntegrationType.GuildInstall]) {
         return null;
     }
-    return interaction.channel?.id || null;
+    return channel?.id || null;
 }

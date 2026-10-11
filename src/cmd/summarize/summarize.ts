@@ -1,6 +1,7 @@
 import type {
     APIApplicationCommandInteraction,
     APIMessage,
+    APIUser,
 } from 'discord-api-types/v10';
 import {
     getLanguageName,
@@ -12,6 +13,7 @@ import {
     error,
     getChatMessages,
     getReadableChannelId,
+    getUser,
     getUserId,
     parseMessageRange,
     sendEmbeds,
@@ -50,6 +52,7 @@ async function summarizeToEmbed(
     env: Bindings,
     messages: APIMessage[],
     language: string,
+    user: APIUser | null,
     options: SummarizeOptions,
 ) {
     const [conversation, name] = await Promise.all([
@@ -58,8 +61,10 @@ async function summarizeToEmbed(
     ]);
     const summary = await summarizeMessages(env, conversation, name);
     return {
-        ...toEmbed(summary),
-        footer: { text: getFooterText(conversation.length) },
+        ...toEmbed(summary, user),
+        footer: {
+            text: getFooterText(conversation.length),
+        },
     };
 }
 
@@ -81,7 +86,13 @@ async function sendSummary(
         interaction.locale,
     );
     const embed = await withTimeout(
-        summarizeToEmbed(env, messages, language, options),
+        summarizeToEmbed(
+            env,
+            messages,
+            language,
+            getUser(interaction),
+            options,
+        ),
     );
     await sendEmbeds(interaction, [embed], ephemeral);
 }

@@ -23,7 +23,10 @@ export function parseMessageRange(from: string | null, to: string | null) {
     if ((from && !fromId) || (to && !toId)) {
         return null;
     }
-    return { from: fromId, to: toId };
+    return {
+        from: fromId,
+        to: toId,
+    };
 }
 
 function getQuery({ from, to }: MessageRange, limit: number) {
@@ -48,9 +51,9 @@ export async function getChatMessages(
     const newestFirst = await getMessages(env, channelId, query);
     const messages = newestFirst.toReversed();
     return messages.filter(
-        (message) =>
-            !message.author.bot &&
-            message.content &&
-            (!range.to || BigInt(message.id) <= BigInt(range.to)),
+        ({ author, content, id }) =>
+            !author.bot &&
+            content &&
+            (!range.to || BigInt(id) <= BigInt(range.to)),
     );
 }

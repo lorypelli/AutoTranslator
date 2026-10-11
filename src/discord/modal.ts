@@ -11,7 +11,10 @@ export function toCustomId(id: string, targetId: string) {
 
 export function fromCustomId(customId: string) {
     const [id = '', targetId = ''] = customId.split(CUSTOM_ID_SEPARATOR);
-    return { id, targetId };
+    return {
+        id,
+        targetId,
+    };
 }
 
 function findModalComponent(

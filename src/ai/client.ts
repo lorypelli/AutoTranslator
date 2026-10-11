@@ -11,8 +11,12 @@ export async function ask(
     retry = true,
 ) {
     const request = env.AI.run(MODEL, {
-        response_format: { type: 'json_object' },
-        chat_template_kwargs: { enable_thinking: false },
+        response_format: {
+            type: 'json_object',
+        },
+        chat_template_kwargs: {
+            enable_thinking: false,
+        },
         messages: [
             { role: 'system', content: prompt },
             { role: 'user', content: JSON.stringify(input) },

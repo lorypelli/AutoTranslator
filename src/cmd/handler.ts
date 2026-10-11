@@ -50,7 +50,9 @@ export async function handleInteraction(
     runtime: Runtime,
 ) {
     if (interaction.type == InteractionType.Ping) {
-        return { type: InteractionResponseType.Pong };
+        return {
+            type: InteractionResponseType.Pong,
+        };
     }
     if (interaction.type == InteractionType.ApplicationCommand) {
         return runCommand(interaction, runtime);

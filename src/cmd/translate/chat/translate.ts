@@ -73,12 +73,13 @@ async function translateToEmbeds(
     const selected = await selectMessages(env, messages, options);
     const translations = await translateMessages(
         env,
-        selected.map((message) => message.content),
+        selected.map(({ content }) => content),
         language,
     );
-    return translations.map((translation, i) =>
-        toEmbed(translation, selected[i]),
-    );
+    return translations.map((translation, i) => {
+        const { author, timestamp } = selected[i];
+        return toEmbed(translation, author, timestamp);
+    });
 }
 
 async function sendTranslations(
@@ -105,7 +106,9 @@ async function sendTranslations(
     const bodies = chunkEmbeds(embeds).map((chunk, i) => ({
         content: i == 0 ? `<@${userId}> ${customMessage}` : undefined,
         embeds: chunk,
-        allowed_mentions: { users: [userId] },
+        allowed_mentions: {
+            users: [userId],
+        },
     }));
     await followUpPublicly(interaction, bodies);
 }
