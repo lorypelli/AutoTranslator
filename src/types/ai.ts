@@ -10,6 +10,7 @@ export type AiPayload = {
     chat_template_kwargs: {
         enable_thinking: boolean;
     };
+    temperature: number;
     messages: AiMessage[];
 };
 

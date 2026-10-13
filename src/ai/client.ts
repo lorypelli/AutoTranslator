@@ -17,6 +17,7 @@ export async function ask(
         chat_template_kwargs: {
             enable_thinking: false,
         },
+        temperature: 0,
         messages: [
             {
                 role: 'system',

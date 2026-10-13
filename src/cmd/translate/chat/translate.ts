@@ -1,6 +1,7 @@
 import type { APIInteraction, APIMessage } from 'discord-api-types/v10';
 import {
     getFirstConversation,
+    getLanguageName,
     getLatestConversation,
     translateMessages,
     withTimeout,
@@ -71,11 +72,14 @@ async function translateToEmbeds(
     options: TranslateChatOptions,
 ) {
     const selected = await selectMessages(env, messages, options);
-    const translations = await translateMessages(
-        env,
-        selected.map(({ content }) => content),
-        language,
-    );
+    const [translations] = await Promise.all([
+        translateMessages(
+            env,
+            selected.map(({ content }) => content),
+            language,
+        ),
+        getLanguageName(env, language),
+    ]);
     return selected.map(({ author, timestamp }, i) =>
         toEmbed(translations.at(i) || '', author, timestamp),
     );

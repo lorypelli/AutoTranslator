@@ -1,5 +1,5 @@
 import type { Bindings } from '../types/index.js';
-import { isStringArray } from '../utils/index.js';
+import { isStringArray, orNull } from '../utils/index.js';
 import { ask } from './client.js';
 import { INVALID_LANGUAGE_ERROR, INVALID_RESPONSE_ERROR } from './errors.js';
 import {
@@ -11,7 +11,7 @@ import {
 
 export async function getLanguageName(env: Bindings, input: string) {
     const { kind, language } = await ask(env, LANGUAGE_NAME_PROMPT, {
-        language: input,
+        input,
     });
     if (kind == 'other') {
         throw new Error(INVALID_LANGUAGE_ERROR);
@@ -29,7 +29,10 @@ export async function getLanguageSuggestions(env: Bindings, input: string) {
     if (!isStringArray(languages)) {
         throw new Error(INVALID_RESPONSE_ERROR);
     }
-    return languages;
+    const checks = await Promise.all(
+        languages.map((name) => orNull(getLanguageName(env, name))),
+    );
+    return languages.filter((_, i) => checks.at(i));
 }
 
 export async function getRandomLanguages(env: Bindings) {
