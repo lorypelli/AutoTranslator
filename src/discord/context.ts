@@ -2,9 +2,15 @@ import {
     type APIInteraction,
     ApplicationIntegrationType,
     InteractionContextType,
+    type RESTPostAPIBaseApplicationCommandsJSONBody,
 } from 'discord-api-types/v10';
 
-export const ANYWHERE = {
+type CommandContext = Pick<
+    RESTPostAPIBaseApplicationCommandsJSONBody,
+    'contexts' | 'integration_types'
+>;
+
+export const ANYWHERE: CommandContext = {
     integration_types: [
         ApplicationIntegrationType.GuildInstall,
         ApplicationIntegrationType.UserInstall,
@@ -16,7 +22,7 @@ export const ANYWHERE = {
     ],
 };
 
-export const WITH_BOT = {
+export const WITH_BOT: CommandContext = {
     integration_types: [ApplicationIntegrationType.GuildInstall],
     contexts: [InteractionContextType.Guild, InteractionContextType.BotDM],
 };

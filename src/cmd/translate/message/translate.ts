@@ -1,5 +1,6 @@
 import type {
     APIApplicationCommandInteraction,
+    APIEmbed,
     APIMessage,
     APIModalSubmitInteraction,
     APIUser,
@@ -46,7 +47,7 @@ async function translateToEmbed(
     language: string,
     user: APIUser | null,
     timestamp?: string,
-) {
+): Promise<APIEmbed> {
     const [translation, target, source] = await Promise.all([
         translateText(env, text, language),
         getLanguageName(env, language),

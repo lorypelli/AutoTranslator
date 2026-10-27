@@ -29,8 +29,7 @@ export async function getCommands(env: Bindings) {
         Routes.applicationCommands(env.APPLICATION_ID),
         'Could not fetch the commands.',
     );
-    const commands: APIApplicationCommand[] = await res.json();
-    return commands;
+    return res.json<APIApplicationCommand[]>();
 }
 
 export async function getApplication(env: Bindings) {
@@ -39,8 +38,7 @@ export async function getApplication(env: Bindings) {
         Routes.currentApplication(),
         'Could not fetch the application.',
     );
-    const application: APIApplication = await res.json();
-    return application;
+    return res.json<APIApplication>();
 }
 
 export async function getOwnerId(env: Bindings) {

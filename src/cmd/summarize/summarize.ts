@@ -1,5 +1,6 @@
 import type {
     APIApplicationCommandInteraction,
+    APIEmbed,
     APIMessage,
     APIUser,
 } from 'discord-api-types/v10';
@@ -54,7 +55,7 @@ async function summarizeToEmbed(
     language: string,
     user: APIUser | null,
     options: SummarizeOptions,
-) {
+): Promise<APIEmbed> {
     const [conversation, name] = await Promise.all([
         selectMessages(env, messages, options),
         getLanguageName(env, language),

@@ -4,7 +4,7 @@ import { orNullWithin, parseJsonObject } from '../utils/index.js';
 const MODEL = '@cf/google/gemma-4-26b-a4b-it';
 const ATTEMPT_TIMEOUT_MS = 12000;
 
-export async function ask(
+export async function ask<K extends string>(
     env: Bindings,
     prompt: string,
     input: JsonObject,
@@ -32,10 +32,10 @@ export async function ask(
     const completion = await orNullWithin(request, ATTEMPT_TIMEOUT_MS);
     if (completion) {
         const [choice] = completion.choices || [];
-        return parseJsonObject(choice?.message?.content || '');
+        return parseJsonObject<K>(choice?.message?.content || '');
     }
     if (retry) {
-        return ask(env, prompt, input, false);
+        return ask<K>(env, prompt, input, false);
     }
     throw new Error('The AI request failed, try again later.');
 }

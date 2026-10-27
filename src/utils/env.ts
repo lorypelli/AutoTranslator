@@ -1,12 +1,13 @@
 import type { Context } from 'hono';
-import { env } from 'hono/adapter';
 import { HTTPException } from 'hono/http-exception';
-import type { RawBindings } from '../types/index.js';
+import type { AppEnv } from '../types/index.js';
 
-export function getBindings(ctx: Context) {
-    const raw = env<RawBindings>(ctx);
+export function getBindings<E extends AppEnv>({
+    env: raw,
+    req,
+}: Context<E, string>) {
     const { AI, LANGUAGES } = raw;
-    const { hostname } = new URL(ctx.req.url);
+    const { hostname } = new URL(req.url);
     if (hostname == raw.PROD_HOSTNAME) {
         return {
             AI,

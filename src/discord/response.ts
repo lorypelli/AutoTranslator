@@ -9,6 +9,12 @@ import {
 import { toEmbed } from './embed.js';
 import { getUser } from './user.js';
 
+export function pong(): APIInteractionResponse {
+    return {
+        type: InteractionResponseType.Pong,
+    };
+}
+
 export function error(content: string): APIInteractionResponse {
     return {
         type: InteractionResponseType.ChannelMessageWithSource,

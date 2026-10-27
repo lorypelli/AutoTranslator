@@ -1,9 +1,10 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { chat, interactions, invite, register } from './routes/index.js';
+import type { AppEnv } from './types/index.js';
 import { UNKNOWN_ERROR } from './utils/index.js';
 
-const app = new Hono();
+const app = new Hono<AppEnv>();
 
 app.onError((err, ctx) => {
     const status = err instanceof HTTPException ? err.status : 500;

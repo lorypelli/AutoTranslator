@@ -1,4 +1,8 @@
-import type { APIInteraction, APIMessage } from 'discord-api-types/v10';
+import type {
+    APIInteraction,
+    APIMessage,
+    RESTPostAPIInteractionFollowupJSONBody,
+} from 'discord-api-types/v10';
 import {
     getFirstConversation,
     getLanguageName,
@@ -114,13 +118,15 @@ async function sendTranslations(
     const embeds = await withTimeout(
         translateToEmbeds(env, messages, language, options),
     );
-    const bodies = chunkEmbeds(embeds).map((chunk, i) => ({
-        content: i == 0 ? `<@${userId}> ${customMessage}` : undefined,
-        embeds: chunk,
-        allowed_mentions: {
-            users: [userId],
-        },
-    }));
+    const bodies = chunkEmbeds(embeds).map(
+        (chunk, i): RESTPostAPIInteractionFollowupJSONBody => ({
+            content: i == 0 ? `<@${userId}> ${customMessage}` : undefined,
+            embeds: chunk,
+            allowed_mentions: {
+                users: [userId],
+            },
+        }),
+    );
     await followUpPublicly(interaction, bodies);
 }
 

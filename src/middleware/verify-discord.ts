@@ -31,7 +31,6 @@ export const verifyDiscord = createMiddleware<DiscordEnv>(async (ctx, next) => {
             message: 'The request signature is invalid.',
         });
     }
-    const interaction: APIInteraction = JSON.parse(body);
-    ctx.set('interaction', interaction);
+    ctx.set('interaction', JSON.parse<APIInteraction>(body));
     await next();
 });

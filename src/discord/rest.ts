@@ -16,12 +16,11 @@ export async function request(
     init?: RequestInit,
     retry = true,
 ) {
+    const headers = new Headers(init?.headers);
+    headers.set('Content-Type', 'application/json');
     const res = await fetch(`${RouteBases.api}${route}`, {
         ...init,
-        headers: {
-            'Content-Type': 'application/json',
-            ...init?.headers,
-        },
+        headers,
     });
     if (res.status == RATE_LIMITED && retry) {
         await setTimeout(getRetryAfter(res));
@@ -39,11 +38,10 @@ export function botRequest(
     errorMessage: string,
     init?: RequestInit,
 ) {
+    const headers = new Headers(init?.headers);
+    headers.set('Authorization', `Bot ${BOT_TOKEN}`);
     return request(route, errorMessage, {
         ...init,
-        headers: {
-            Authorization: `Bot ${BOT_TOKEN}`,
-            ...init?.headers,
-        },
+        headers,
     });
 }

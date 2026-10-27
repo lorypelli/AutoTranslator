@@ -12,8 +12,7 @@ export async function getMessage(
         Routes.channelMessage(channelId, messageId),
         'Could not fetch the message.',
     );
-    const message: APIMessage = await res.json();
-    return message;
+    return res.json<APIMessage>();
 }
 
 export async function getMessages(
@@ -26,6 +25,5 @@ export async function getMessages(
         `${Routes.channelMessages(channelId)}?${query}`,
         'Could not fetch the messages.',
     );
-    const messages: APIMessage[] = await res.json();
-    return messages;
+    return res.json<APIMessage[]>();
 }

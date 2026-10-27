@@ -10,7 +10,7 @@ export function toEmbed(
     description: string,
     user: APIUser | null,
     timestamp = new Date().toISOString(),
-) {
+): APIEmbed {
     return {
         color: EMBED_COLOR,
         author: user
@@ -37,7 +37,7 @@ function fits(chunk: APIEmbed[], embed: APIEmbed) {
 }
 
 export function chunkEmbeds(embeds: APIEmbed[]) {
-    return embeds.reduce((chunks: APIEmbed[][], embed) => {
+    return embeds.reduce<APIEmbed[][]>((chunks, embed) => {
         const last = chunks.at(-1);
         if (last && fits(last, embed)) {
             last.push(embed);

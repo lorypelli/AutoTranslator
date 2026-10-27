@@ -5,7 +5,9 @@ import { isStringArray, parseJsonObject } from '../utils/index.js';
 
 export const validateChat = createMiddleware<ChatEnv>(async (ctx, next) => {
     const body = await ctx.req.text();
-    const { language, messages } = await parseJsonObject(body);
+    const { language, messages } = await parseJsonObject<
+        'language' | 'messages'
+    >(body);
     if (
         typeof language != 'string' ||
         !isStringArray(messages) ||

@@ -23,13 +23,19 @@ export type RawBindings = {
     LANGUAGES: Kv;
 };
 
+export type AppEnv = {
+    Bindings: RawBindings;
+};
+
 export type DiscordEnv = {
+    Bindings: RawBindings;
     Variables: {
         interaction: APIInteraction;
     };
 };
 
 export type ChatEnv = {
+    Bindings: RawBindings;
     Variables: {
         language: string;
         messages: string[];

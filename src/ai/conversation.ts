@@ -7,13 +7,15 @@ import {
     LATEST_CONVERSATION_PROMPT,
 } from './prompts.js';
 
+type Boundary = 'start' | 'end';
+
 async function findBoundary(
     env: Bindings,
     prompt: string,
-    key: string,
+    key: Boundary,
     messages: APIMessage[],
 ) {
-    const reply = await ask(env, prompt, {
+    const reply = await ask<Boundary>(env, prompt, {
         messages: messages.map(({ content }, id) => ({
             id,
             content,

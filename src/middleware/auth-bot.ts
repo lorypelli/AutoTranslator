@@ -1,13 +1,15 @@
-import type { Env } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
+import type { AppEnv } from '../types/index.js';
 import { getBindings, parseJsonObject } from '../utils/index.js';
 
-export const authBot = createMiddleware<Env>(async (ctx, next) => {
+export const authBot = createMiddleware<AppEnv>(async (ctx, next) => {
     const { APPLICATION_ID, BOT_TOKEN } = getBindings(ctx);
     const body = await ctx.req.text();
-    const { applicationId, botToken } = await parseJsonObject(body);
-    if (!applicationId || !botToken) {
+    const { applicationId, botToken } = await parseJsonObject<
+        'applicationId' | 'botToken'
+    >(body);
+    if (typeof applicationId != 'string' || typeof botToken != 'string') {
         throw new HTTPException(401, {
             message: 'The application ID and bot token are required.',
         });

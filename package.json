@@ -7,15 +7,15 @@
     },
     "dependencies": {
         "@discord-interactions/verify": "^0.3.16",
-        "discord-api-types": "^0.38.56",
-        "hono": "^4.13.13"
+        "discord-api-types": "^0.38.57",
+        "hono": "^4.13.14"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.5.15",
-        "@types/node": "^26.6.4",
-        "tsdown": "^0.23.0",
+        "@biomejs/biome": "^2.6.3",
+        "@types/node": "^26.6.5",
+        "tsdown": "^0.23.2",
         "typescript": "^7.0.2",
-        "wrangler": "^4.148.0"
+        "wrangler": "^4.153.0"
     },
-    "packageManager": "pnpm@12.10.0"
+    "packageManager": "pnpm@12.15.0"
 }

@@ -3,10 +3,14 @@ import {
     type APIApplicationCommandInteraction,
     type APIInteraction,
     type APIModalSubmitInteraction,
-    InteractionResponseType,
     InteractionType,
 } from 'discord-api-types/v10';
-import { autocompleteChoices, error, fromCustomId } from '../discord/index.js';
+import {
+    autocompleteChoices,
+    error,
+    fromCustomId,
+    pong,
+} from '../discord/index.js';
 import type { Runtime } from '../types/index.js';
 import { COMMANDS, MODALS } from './commands.js';
 
@@ -50,9 +54,7 @@ export async function handleInteraction(
     runtime: Runtime,
 ) {
     if (interaction.type == InteractionType.Ping) {
-        return {
-            type: InteractionResponseType.Pong,
-        };
+        return pong();
     }
     if (interaction.type == InteractionType.ApplicationCommand) {
         return runCommand(interaction, runtime);

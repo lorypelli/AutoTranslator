@@ -17,7 +17,10 @@ export function parseMessageId(text: string) {
     return SNOWFLAKE_REGEX.test(id) ? id : null;
 }
 
-export function parseMessageRange(from: string | null, to: string | null) {
+export function parseMessageRange(
+    from: string | null,
+    to: string | null,
+): MessageRange | null {
     const fromId = from ? parseMessageId(from) : null;
     const toId = to ? parseMessageId(to) : null;
     if ((from && !fromId) || (to && !toId)) {

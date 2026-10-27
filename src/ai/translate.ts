@@ -11,7 +11,7 @@ async function translateChunk(
     messages: string[],
     language: string,
 ) {
-    const { translations } = await ask(env, TRANSLATE_PROMPT, {
+    const { translations } = await ask<'translations'>(env, TRANSLATE_PROMPT, {
         language,
         messages,
     });
