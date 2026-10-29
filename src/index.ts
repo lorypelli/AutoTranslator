@@ -1,6 +1,12 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import { chat, interactions, invite, register } from './routes/index.js';
+import {
+    chat,
+    github,
+    interactions,
+    invite,
+    register,
+} from './routes/index.js';
 import type { AppEnv } from './types/index.js';
 import { UNKNOWN_ERROR } from './utils/index.js';
 
@@ -25,6 +31,7 @@ app.get('/', (ctx) =>
 
 app.route('/', interactions);
 app.route('/chat', chat);
+app.route('/github', github);
 app.route('/invite', invite);
 app.route('/register', register);
 

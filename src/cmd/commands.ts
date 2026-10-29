@@ -1,3 +1,4 @@
+import { GITHUB_COMMAND } from './github/index.js';
 import { HELP_COMMAND } from './help/index.js';
 import { INVITE_COMMAND } from './invite/index.js';
 import { LANGUAGE_COMMAND } from './language/index.js';
@@ -12,6 +13,7 @@ import {
 } from './translate/index.js';
 
 export const COMMANDS = [
+    GITHUB_COMMAND,
     HELP_COMMAND,
     INVITE_COMMAND,
     LANGUAGE_COMMAND,
